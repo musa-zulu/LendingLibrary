@@ -27,7 +27,7 @@ end
 $solution = "source/LendingLibrary.sln"
 #---- c# testing ------------------------------------------------
 $binaries_baselocation = "source/bin"
-$nuget_location = "../rake-tasks"
+$nuget_location = "/rake-tasks"
 $binaries_location = "#{$binaries_baselocation}/all"
 $nunittesting_location = "#{$binaries_baselocation}/nunittesting"
 #---- javascript testing ----------------------------------------
