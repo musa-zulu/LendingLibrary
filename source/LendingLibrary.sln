@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Web", "Lendi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Web.Tests", "LendingLibrary.Web.Tests\LendingLibrary.Web.Tests.csproj", "{D21E43D9-7D22-4FEE-B6C8-B2C6849598D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Models", "LendingLibrary.Models\LendingLibrary.Models.csproj", "{22BB60B2-2DEB-40E1-967E-4E98370B53C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Model.Tests", "LendingLibrary.Model.Tests\LendingLibrary.Model.Tests.csproj", "{D5556FCE-5B49-4273-9800-E8096A53FD2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{D21E43D9-7D22-4FEE-B6C8-B2C6849598D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D21E43D9-7D22-4FEE-B6C8-B2C6849598D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D21E43D9-7D22-4FEE-B6C8-B2C6849598D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22BB60B2-2DEB-40E1-967E-4E98370B53C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22BB60B2-2DEB-40E1-967E-4E98370B53C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22BB60B2-2DEB-40E1-967E-4E98370B53C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22BB60B2-2DEB-40E1-967E-4E98370B53C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5556FCE-5B49-4273-9800-E8096A53FD2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5556FCE-5B49-4273-9800-E8096A53FD2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5556FCE-5B49-4273-9800-E8096A53FD2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5556FCE-5B49-4273-9800-E8096A53FD2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,6 @@
-﻿using System;
+﻿using System.Web.Mvc;
+using LendingLibrary.Web.ViewModels;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace LendingLibrary.Web.Controllers
 {
@@ -10,21 +8,27 @@ namespace LendingLibrary.Web.Controllers
     {
         public ActionResult Index()
         {
-            return View();
-        }
+         var itemViewModel = new ItemViewModel
+            {
+                DaysLentOut = 5,
+                ItemName = "Eggs",
+                PersonName = "Musa"
+            };
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
+            var itemViewModel2 = new ItemViewModel
+            {
+                DaysLentOut = 5,
+                ItemName = "Ball",
+                PersonName = "Matt"
+            };
 
-            return View();
-        }
+            var ItemViewModelList = new List<ItemViewModel>
+            {
+                itemViewModel, itemViewModel2
+            };
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return View(ItemViewModelList);
         }
     }
 }
+
