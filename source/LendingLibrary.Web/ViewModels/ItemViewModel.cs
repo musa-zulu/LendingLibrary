@@ -10,6 +10,5 @@ namespace LendingLibrary.Web.ViewModels
         public string PersonName { get; set; }
         [DisplayName("Days Lent Out")]
         public int DaysLentOut { get; set; }
-        
     }
 }
