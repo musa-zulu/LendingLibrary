@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using System.Web.Security;
 using LendingLibrary.Web.ViewModels;
 
 namespace LendingLibrary.Web.Controllers
@@ -15,9 +16,32 @@ namespace LendingLibrary.Web.Controllers
         [HttpPost]
         public ActionResult Login(SecurityViewModel viewModel)
         {
-            if (viewModel.UserName == "Musa" && viewModel.Password == "Musa")
-                return RedirectToAction("Index", "Home");
+            var userName = viewModel.UserName;
+            var password = viewModel.Password;
+
+            if (IsValidUser(userName, password))
+            {
+                FormsAuthentication.RedirectFromLoginPage(userName, false);
+               // return RedirectToAction("Index", "Home");
+            }
+            
             return View("Login");
+        }
+
+        private static bool IsValidUser(string userName, string password)
+        {
+            return userName == "Musa" && password == "Musa";
+        }
+
+        public ActionResult LogOff()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login","Security");
+        }
+
+        public ActionResult Register()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

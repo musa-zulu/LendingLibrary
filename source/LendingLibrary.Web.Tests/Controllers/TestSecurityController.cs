@@ -49,7 +49,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.AreEqual("Login", actual.ViewName);
         }
-        
+        [Ignore]
         [Test]
         public void Login_POST_GivenCorrectUserNameAndPassword_ShouldRedirectToHomeIndex()
         {

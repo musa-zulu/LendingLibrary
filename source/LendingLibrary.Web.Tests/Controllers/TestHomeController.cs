@@ -1,5 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using LendingLibrary.Web.Controllers;
+using LendingLibrary.Web.ViewModels;
 using NUnit.Framework;
 
 namespace LendingLibrary.Web.Tests.Controllers
@@ -11,12 +13,42 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Index_ShouldReturnView()
         {
             //---------------Set up test pack-------------------
-            var homeController = new HomeController();
+            var homeController = CreateHomeController();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
-            var actual = homeController.Index() as ViewResult;
+            var result = homeController.Index() as ViewResult;
             //---------------Test Result -----------------------
-            Assert.IsNotNull(actual);
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Index_ShouldReturnViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var homeController = CreateHomeController();
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = (ViewResult)homeController.Index();
+            //---------------Test Result -----------------------
+            var model = result.Model;
+            Assert.IsInstanceOf<List<ItemViewModel>>(model);
+        }
+        [Ignore]
+        [Test]
+        public void Create_ShouldReturnViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var homeController = CreateHomeController();
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = (ViewResult)homeController.Create();
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+        }
+
+        private static HomeController CreateHomeController()
+        {
+            return new HomeController();
         }
     }
 }

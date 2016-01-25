@@ -8,26 +8,13 @@ namespace LendingLibrary.Web.Controllers
     {
         public ActionResult Index()
         {
-         var itemViewModel = new ItemViewModel
-            {
-                DaysLentOut = 5,
-                ItemName = "Eggs",
-                PersonName = "Musa"
-            };
+            var itemViewModel = new List<ItemViewModel>();
+            return View(itemViewModel);
+        }
 
-            var itemViewModel2 = new ItemViewModel
-            {
-                DaysLentOut = 5,
-                ItemName = "Ball",
-                PersonName = "Matt"
-            };
-
-            var ItemViewModelList = new List<ItemViewModel>
-            {
-                itemViewModel, itemViewModel2
-            };
-
-            return View(ItemViewModelList);
+        public ViewResult Create()
+        {
+            return View();
         }
     }
 }

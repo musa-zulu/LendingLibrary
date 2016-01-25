@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{22BB60B2-2DEB-40E1-967E-4E98370B53C0}</ProjectGuid>
+    <ProjectGuid>{55157C48-EDF3-4D04-920B-6EE9799F2AD9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LendingLibrary.Models</RootNamespace>
-    <AssemblyName>LendingLibrary.Models</AssemblyName>
+    <RootNamespace>LendingLibrary.DB</RootNamespace>
+    <AssemblyName>LendingLibrary.DB</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,7 +39,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FakeRepository\PersonRepository.cs" />
+    <Compile Include="Repository\ItemsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TempDbContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LendingLibrary.Core\LendingLibrary.Core.csproj">
+      <Project>{f1c5d8f5-a291-4865-9ba4-e21341778021}</Project>
+      <Name>LendingLibrary.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
