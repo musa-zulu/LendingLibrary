@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -12,7 +9,7 @@ using LendingLibrary.Web.Repository;
 
 namespace LendingLibrary.Web
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         protected void Application_Start()
         {
@@ -29,8 +26,7 @@ namespace LendingLibrary.Web
             container.Install(FromAssembly.This());
             container.Register(Component.For<IWindsorContainer>()
                 .Instance(container));
-
-
+            
             container.Register(
                Component
                    .For<IControllerFactory>()
@@ -41,8 +37,7 @@ namespace LendingLibrary.Web
             container.Register(Classes.FromThisAssembly()
               .BasedOn<IController>()
               .LifestyleTransient());
-
-
+            
             container.Register(Component.For<IItemsRepository>().ImplementedBy<ItemsRepository>());
             SetControllerFactory(container);
 

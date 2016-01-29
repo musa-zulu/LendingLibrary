@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{55157C48-EDF3-4D04-920B-6EE9799F2AD9}</ProjectGuid>
+    <ProjectGuid>{15A6B0A0-FAF2-4E2B-BF7B-E8D472409BAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LendingLibrary.DB</RootNamespace>
-    <AssemblyName>LendingLibrary.DB</AssemblyName>
+    <RootNamespace>LendingLibrary.DB.Migrations</RootNamespace>
+    <AssemblyName>LendingLibrary.DB.Migrations</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,41 +30,36 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="FluentMigrator, Version=1.6.1.0, Culture=neutral, PublicKeyToken=aacfc7de5acabf05, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentMigrator.1.6.1\lib\40\FluentMigrator.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="FluentMigrator.Runner, Version=1.6.1.0, Culture=neutral, PublicKeyToken=aacfc7de5acabf05, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentMigrator.Runner.1.6.1\lib\40\FluentMigrator.Runner.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbConstants.cs" />
-    <Compile Include="FakeRepository\PersonRepository.cs" />
-    <Compile Include="LendingLibraryDbContext.cs" />
-    <Compile Include="Mapping\ItemMap.cs" />
-    <Compile Include="Repository\ItemsRepository.cs" />
+    <Compile Include="DBMigrationsRunner.cs" />
+    <Compile Include="Migrations\_201601291443_InitialMigration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TempDbContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LendingLibrary.Core\LendingLibrary.Core.csproj">
-      <Project>{f1c5d8f5-a291-4865-9ba4-e21341778021}</Project>
-      <Name>LendingLibrary.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LendingLibrary.DB\LendingLibrary.DB.csproj">
+      <Project>{55157c48-edf3-4d04-920b-6ee9799f2ad9}</Project>
+      <Name>LendingLibrary.DB</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
