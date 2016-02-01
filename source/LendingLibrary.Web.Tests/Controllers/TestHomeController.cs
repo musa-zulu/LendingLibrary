@@ -33,7 +33,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var model = result.Model;
             Assert.IsInstanceOf<List<ItemViewModel>>(model);
         }
-        [Ignore]
+        [Ignore("")]
         [Test]
         public void Create_ShouldReturnViewModel()
         {

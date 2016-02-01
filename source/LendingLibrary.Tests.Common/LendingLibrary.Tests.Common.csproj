@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NSubstitute, Version=1.9.1.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <HintPath>..\packages\NSubstitute.1.9.1.0\lib\net45\NSubstitute.dll</HintPath>
       <Private>True</Private>
@@ -43,14 +51,15 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="PeanutButter.TestUtils.Generic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.TestUtils.Generic.1.1.12\lib\net40\PeanutButter.TestUtils.Generic.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.TestUtils.Generic.1.1.28\lib\net40\PeanutButter.TestUtils.Generic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PeanutButter.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PeanutButter.Utils.1.1.12\lib\net40\PeanutButter.Utils.dll</HintPath>
+      <HintPath>..\packages\PeanutButter.Utils.1.1.28\lib\net40\PeanutButter.Utils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -61,22 +70,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\Domain\ItemBuilder.cs" />
+    <Compile Include="Builders\LendingLibraryDbContextBuilder.cs" />
+    <Compile Include="Builders\ViewModels\ItemsViewModelBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Builders\Controllers\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="GenericBuilderTests-ExampleUsage.cs.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LendingLibrary.Core\LendingLibrary.Core.csproj">
       <Project>{F1C5D8F5-A291-4865-9BA4-E21341778021}</Project>
       <Name>LendingLibrary.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LendingLibrary.DB\LendingLibrary.DB.csproj">
+      <Project>{55157C48-EDF3-4D04-920B-6EE9799F2AD9}</Project>
+      <Name>LendingLibrary.DB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LendingLibrary.Web\LendingLibrary.Web.csproj">
+      <Project>{E565F80B-7A68-49BF-9D66-703C4CCB380D}</Project>
+      <Name>LendingLibrary.Web</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GenericBuilderTests-ExampleUsage.cs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

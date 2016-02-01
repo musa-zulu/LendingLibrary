@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
-using LendingLibrary.Web.Repository;
+using LendingLibrary.Core.Domain;
+using LendingLibrary.Core.Interfaces.Repositories;
 using LendingLibrary.Web.ViewModels;
 
 namespace LendingLibrary.Web.Controllers
@@ -17,7 +18,7 @@ namespace LendingLibrary.Web.Controllers
 
         public ActionResult Index()
         {
-            return View(_itemsRepository.GetAll());
+            return View();
         }
 
         public ActionResult Create()
@@ -28,10 +29,9 @@ namespace LendingLibrary.Web.Controllers
         [HttpPost]
         public ActionResult Create(ItemViewModel itemViewModel)
         {
-            
             if (ModelState.IsValid)
             {
-                _itemsRepository.Save(itemViewModel);
+                //_itemsRepository.Save(item);
                 return RedirectToAction("Index", "Items");
             }
             return View(itemViewModel);

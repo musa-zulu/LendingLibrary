@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=4.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.2.0\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
@@ -121,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\Bootstrappers\Installers\EntityFrameworkInstaller.cs" />
+    <Compile Include="App_Start\Bootstrappers\Ioc\AutoMapperProfiles\ItemsMappings.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -188,6 +193,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LendingLibrary.Core\LendingLibrary.Core.csproj">
+      <Project>{F1C5D8F5-A291-4865-9BA4-E21341778021}</Project>
+      <Name>LendingLibrary.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LendingLibrary.DB\LendingLibrary.DB.csproj">
       <Project>{55157C48-EDF3-4D04-920B-6EE9799F2AD9}</Project>
       <Name>LendingLibrary.DB</Name>

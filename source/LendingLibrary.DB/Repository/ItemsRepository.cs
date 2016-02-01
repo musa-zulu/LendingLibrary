@@ -20,5 +20,10 @@ namespace LendingLibrary.DB.Repository
         {
             return _lendingLibraryDbContext.Items.ToList();
         }
+
+        public void Save(Item item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Security.Permissions;
-
-namespace LendingLibrary.DB
+﻿namespace LendingLibrary.DB
 {
     public class DbConstants
     {
