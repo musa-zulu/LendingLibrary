@@ -38,6 +38,14 @@
       <HintPath>..\packages\AutoMapper.EF6.0.3.0\lib\net45\AutoMapper.EF6.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.3.3.0\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DelegateDecompiler, Version=1.0.0.0, Culture=neutral, PublicKeyToken=93b26a10a04705bd, processorArchitecture=MSIL">
       <HintPath>..\packages\DelegateDecompiler.0.17.0\lib\net40-Client\DelegateDecompiler.dll</HintPath>
       <Private>True</Private>
@@ -122,6 +130,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\Bootstrappers\Installers\TestAutoMapperInstaller.cs" />
+    <Compile Include="App_Start\Bootstrappers\Installers\TestEntityFrameworkInstaller.cs" />
+    <Compile Include="App_Start\TestWindsorControllerFactory.cs" />
     <Compile Include="Controllers\TestHomeController.cs" />
     <Compile Include="Controllers\TestItemsController.cs" />
     <Compile Include="Controllers\TestSecurityController.cs" />
@@ -136,6 +147,10 @@
     <ProjectReference Include="..\LendingLibrary.Core\LendingLibrary.Core.csproj">
       <Project>{F1C5D8F5-A291-4865-9BA4-E21341778021}</Project>
       <Name>LendingLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LendingLibrary.DB\LendingLibrary.DB.csproj">
+      <Project>{55157C48-EDF3-4D04-920B-6EE9799F2AD9}</Project>
+      <Name>LendingLibrary.DB</Name>
     </ProjectReference>
     <ProjectReference Include="..\LendingLibrary.Tests.Common\LendingLibrary.Tests.Common.csproj">
       <Project>{34d6a048-1996-41ae-b62e-4a77d150ead6}</Project>

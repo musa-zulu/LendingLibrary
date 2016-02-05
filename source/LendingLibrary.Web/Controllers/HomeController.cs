@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace LendingLibrary.Web.Controllers
 {
+    [RequireHttps]
     public class HomeController : Controller
     {
         public ActionResult Index()

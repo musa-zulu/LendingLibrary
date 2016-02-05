@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Web.Mvc;
+using AutoMapper;
 using LendingLibrary.Core.Interfaces.Repositories;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using LendingLibrary.Tests.Common.Builders.ViewModels;
@@ -126,12 +127,15 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.NotNull(httpPostAttribute);
         }
+
         
-        private static ItemsController CreateItemsController(IItemsRepository itemsRepository = null)
+        
+        private static ItemsController CreateItemsController(IItemsRepository itemsRepository = null, IMappingEngine mappingEngine = null)
         {
-            if (itemsRepository == null)
+            if (itemsRepository == null || mappingEngine == null)
             {
                 itemsRepository = Substitute.For<IItemsRepository>();
+                mappingEngine = Substitute.For<IMappingEngine>();
             }
             return new ItemsController(itemsRepository);
         }
