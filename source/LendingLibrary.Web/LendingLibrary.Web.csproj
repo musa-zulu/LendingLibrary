@@ -188,6 +188,7 @@
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <None Include="Views\Items\Create.cshtml" />
+    <None Include="Views\Items\Edit.cshtml" />
     <None Include="Views\Items\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

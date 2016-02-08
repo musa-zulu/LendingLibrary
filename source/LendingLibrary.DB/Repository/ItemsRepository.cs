@@ -25,5 +25,10 @@ namespace LendingLibrary.DB.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Item GetById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

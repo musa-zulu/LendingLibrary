@@ -44,5 +44,12 @@ namespace LendingLibrary.Web.Controllers
             }
             return View(itemViewModel);
         }
+
+        public ActionResult Edit(Guid id)
+        {
+            var item = _itemsRepository.GetById(id);
+            var itemViewModel = _mappingEngine.Map<Item, ItemViewModel>(item);
+            return View(itemViewModel);
+        }
     }
 }

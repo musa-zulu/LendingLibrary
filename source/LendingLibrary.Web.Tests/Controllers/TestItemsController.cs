@@ -62,10 +62,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Index_ShouldReturnView()
         {
             //---------------Set up test pack-------------------
-            var itemsRepository = Substitute.For<IItemsRepository>();
-
-            var itemsController = CreateItemsControllerBuilder()
-                                 .WithItemsRepository(itemsRepository)
+            var itemsController = CreateItemsControllerBuilder()               
                                  .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
@@ -79,6 +76,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
+
             var itemsController = CreateItemsControllerBuilder()
                 .WithItemsRepository(itemsRepository)
                 .Build();
@@ -232,7 +230,86 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.NotNull(httpPostAttribute);
         }
 
+        [Test]
+        public void Edit_ShouldReturnView()
+        {
+            //---------------Set up test pack-------------------
+            var itemsController = CreateItemsControllerBuilder().Build();
+            //---------------Assert Precondition----------------
 
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(Guid.Empty);
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Edit_GivenItemId_ShouldCallGetByIdFromTheItemsRepo()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var item = ItemBuilder.BuildRandom();
+            var id = item.ItemId;
+            itemsRepository.GetById(id).Returns(item);
+
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            itemsRepository.Received(1).GetById(id);
+        }
+
+        [Test]
+        public void Edit_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var item = ItemBuilder.BuildRandom();
+            var id = item.ItemId;
+            itemsRepository.GetById(id).Returns(item);
+
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(id);
+            //---------------Test Result -----------------------
+            mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
+        }
+
+        [Test]
+        public void Edit_ShouldReturnViewWithItemViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var item = new ItemBuilder().WithRandomProps().Build();
+            var id = item.ItemId;
+            itemsRepository.GetById(id).Returns(item);
+
+            var itemsController = CreateItemsControllerBuilder()
+                .WithMappingEngine(mappingEngine)
+                .WithItemsRepository(itemsRepository)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model;
+            Assert.IsNotNull(model);
+            Assert.IsInstanceOf<ItemViewModel>(model);
+        }
+        
         private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
             return new ItemsControllerBuilder();

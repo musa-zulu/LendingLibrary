@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LendingLibrary.Core.Domain;
 
 namespace LendingLibrary.Core.Interfaces.Repositories
@@ -7,5 +8,6 @@ namespace LendingLibrary.Core.Interfaces.Repositories
     {
         List<Item> GetAllItems();
         void Save(Item item);
+        Item GetById(Guid id);
     }
 }
