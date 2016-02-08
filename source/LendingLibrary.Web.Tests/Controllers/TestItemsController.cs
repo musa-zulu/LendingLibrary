@@ -62,7 +62,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Index_ShouldReturnView()
         {
             //---------------Set up test pack-------------------
-            var itemsController = CreateItemsControllerBuilder()               
+            var itemsController = CreateItemsControllerBuilder()
                                  .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
@@ -150,6 +150,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var mappingEngine = Substitute.For<IMappingEngine>();
             var itemsViewModel = new ItemViewModel();
+
             var itemsController = CreateItemsControllerBuilder()
                 .WithMappingEngine(mappingEngine)
                 .Build();
@@ -203,7 +204,6 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsViewModel = new ItemViewModel();
-
             var itemsController = CreateItemsControllerBuilder().Build();
 
             itemsController.ModelState.AddModelError("key", "some error");
@@ -309,7 +309,76 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsNotNull(model);
             Assert.IsInstanceOf<ItemViewModel>(model);
         }
-        
+
+        [Test]
+        public void Edit_POST_ShouldHaveHttpPostAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(ItemsController).GetMethod("Edit", new[] { typeof(ItemViewModel) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var httpPostAttribute = methodInfo.GetCustomAttribute<HttpPostAttribute>();
+            //---------------Test Result -----------------------
+            Assert.NotNull(httpPostAttribute);
+        }
+
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+            var mappingEngine = Substitute.For<IMappingEngine>();
+
+            var itemsController = CreateItemsControllerBuilder()
+                                .WithMappingEngine(mappingEngine)
+                                .Build();
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(itemsController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(itemViewModel);
+            //---------------Test Result -----------------------
+            mappingEngine.Received(1).Map<ItemViewModel, Item>(itemViewModel);
+        }
+
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallSaveFromItemsRepo()
+        {
+            //---------------Set up test pack-------------------
+            var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+
+            var itemsController = CreateItemsControllerBuilder()
+                                .WithItemsRepository(itemsRepository)
+                                .WithMappingEngine(mappingEngine)
+                                .Build();
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(itemsController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(itemViewModel);
+            //---------------Test Result -----------------------
+            itemsRepository.Received(1).Save(Arg.Any<Item>());
+        }
+
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldRedirectToItemsIndexPage()
+        {
+            //---------------Set up test pack-------------------
+            var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+
+            var itemsController = CreateItemsControllerBuilder()
+                                .Build();
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(itemsController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(itemViewModel) as RedirectToRouteResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Index", result.RouteValues["Action"]);
+            Assert.AreEqual("Items", result.RouteValues["Controller"]);
+        }
+
         private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
             return new ItemsControllerBuilder();

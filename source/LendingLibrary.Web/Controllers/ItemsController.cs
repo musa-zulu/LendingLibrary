@@ -51,5 +51,17 @@ namespace LendingLibrary.Web.Controllers
             var itemViewModel = _mappingEngine.Map<Item, ItemViewModel>(item);
             return View(itemViewModel);
         }
+
+        [HttpPost]
+        public ActionResult Edit(ItemViewModel itemViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
+                _itemsRepository.Save(item);
+                return RedirectToAction("Index", "Items");
+            }
+            return View();
+        }
     }
 }
