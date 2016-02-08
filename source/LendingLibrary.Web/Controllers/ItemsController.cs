@@ -55,13 +55,10 @@ namespace LendingLibrary.Web.Controllers
         [HttpPost]
         public ActionResult Edit(ItemViewModel itemViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
-                _itemsRepository.Save(item);
-                return RedirectToAction("Index", "Items");
-            }
-            return View();
+            if (!ModelState.IsValid) return View(itemViewModel);
+            var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
+            _itemsRepository.Save(item);
+            return RedirectToAction("Index", "Items");
         }
     }
 }

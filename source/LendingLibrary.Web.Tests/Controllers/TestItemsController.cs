@@ -379,6 +379,25 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.AreEqual("Items", result.RouteValues["Controller"]);
         }
 
+        [Test]
+        public void Edit_POST_GivenModelStateIsInvalid_ShouldReturnViewWithViewItemsViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+
+            var itemsController = CreateItemsControllerBuilder().Build();
+            itemsController.ModelState.AddModelError("key", "error message");
+            //---------------Assert Precondition----------------
+            Assert.IsFalse(itemsController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = itemsController.Edit(itemViewModel) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model;
+            Assert.IsNotNull(model);
+            Assert.IsInstanceOf<ItemViewModel>(model);
+        }
+
         private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
             return new ItemsControllerBuilder();
