@@ -6,6 +6,7 @@ using AutoMapper;
 using Castle.Windsor;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
+using LendingLibrary.Tests.Common.Builders.Controllers;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using LendingLibrary.Tests.Common.Builders.ViewModels;
 using LendingLibrary.Web.Bootstrappers.Installers;
@@ -42,7 +43,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
-            Assert.DoesNotThrow(() => new ItemsController(Substitute.For<IItemsRepository>(),Substitute.For<IMappingEngine>()));
+            Assert.DoesNotThrow(() => new ItemsController(Substitute.For<IItemsRepository>(), Substitute.For<IMappingEngine>()));
             //---------------Test Result -----------------------
         }
 
@@ -62,7 +63,10 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
-            var itemsController = CreateItemsController(itemsRepository);
+
+            var itemsController = CreateItemsControllerBuilder()
+                                 .WithItemsRepository(itemsRepository)
+                                 .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var result = (ViewResult)itemsController.Index();
@@ -75,7 +79,9 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
-            var itemsController = CreateItemsController(itemsRepository);
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var result = itemsController.Index();
@@ -92,7 +98,10 @@ namespace LendingLibrary.Web.Tests.Controllers
             var items = new List<Item>();
             itemsRepository.GetAllItems().Returns(items);
 
-            var itemsController = CreateItemsController(itemsRepository, mappingEngine);
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var result = itemsController.Index();
@@ -109,7 +118,10 @@ namespace LendingLibrary.Web.Tests.Controllers
             var items = new List<Item>();
             itemsRepository.GetAllItems().Returns(items);
 
-            var itemsController = CreateItemsController(itemsRepository, mappingEngine);
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var result = (ViewResult)itemsController.Index();
@@ -123,7 +135,10 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
-            var itemsController = CreateItemsController(itemsRepository);
+
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
             var result = (ViewResult)itemsController.Create();
@@ -137,7 +152,9 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var mappingEngine = Substitute.For<IMappingEngine>();
             var itemsViewModel = new ItemViewModel();
-            var itemsController = CreateItemsController(null, mappingEngine);
+            var itemsController = CreateItemsControllerBuilder()
+                .WithMappingEngine(mappingEngine)
+                .Build();
             //---------------Assert Precondition----------------
             Assert.IsTrue(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
@@ -145,7 +162,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             mappingEngine.Received(1).Map<ItemViewModel, Item>(itemsViewModel);
         }
-       
+
         [Test]
         public void Create_POST_GivenModelStateIsValid_ShouldCallSaveFromItemsRepo()
         {
@@ -153,8 +170,11 @@ namespace LendingLibrary.Web.Tests.Controllers
             var mappingEngine = _container.Resolve<IMappingEngine>();
             var itemsRepository = Substitute.For<IItemsRepository>();
             var itemViewModel = ItemsViewModelBuilder.BuildRandom();
-      
-            var itemsController = CreateItemsController(itemsRepository, mappingEngine);
+
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
             //---------------Assert Precondition----------------
             Assert.IsTrue(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
@@ -169,7 +189,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var itemsViewModel = new ItemViewModel();
 
-            var itemsController = CreateItemsController();
+            var itemsController = CreateItemsControllerBuilder().Build();
             //---------------Assert Precondition----------------
             Assert.IsTrue(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
@@ -185,7 +205,8 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsViewModel = new ItemViewModel();
-            var itemsController = CreateItemsController();
+
+            var itemsController = CreateItemsControllerBuilder().Build();
 
             itemsController.ModelState.AddModelError("key", "some error");
             //---------------Assert Precondition----------------
@@ -212,12 +233,9 @@ namespace LendingLibrary.Web.Tests.Controllers
         }
 
 
-
-        private static ItemsController CreateItemsController(IItemsRepository itemsRepository = null, IMappingEngine mappingEngine = null)
+        private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
-            itemsRepository = itemsRepository ?? Substitute.For<IItemsRepository>();
-            mappingEngine = mappingEngine ?? Substitute.For<IMappingEngine>();
-            return new ItemsController(itemsRepository, mappingEngine);
+            return new ItemsControllerBuilder();
         }
     }
 }
