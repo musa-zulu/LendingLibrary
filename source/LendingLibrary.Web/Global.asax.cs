@@ -38,7 +38,8 @@ namespace LendingLibrary.Web
               .BasedOn<IController>()
               .LifestyleTransient());
             
-            container.Register(Component.For<IItemsRepository>().ImplementedBy<ItemsRepository>());
+            container.Register(Component.For<IItemsRepository>()
+                     .ImplementedBy<ItemsRepository>());
             SetControllerFactory(container);
 
             return container;

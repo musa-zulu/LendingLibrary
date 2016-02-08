@@ -3,7 +3,7 @@
 namespace LendingLibrary.DB.Migrations.Tests
 {
     [TestFixture]
-    public class TestDBMigrationsRunner
+    public class DummyTest
     {
         [Test]
         public void Dummy()

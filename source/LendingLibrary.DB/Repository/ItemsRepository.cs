@@ -16,7 +16,7 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext = lendingLibraryDbContext;
         }
 
-        public IEnumerable<Item> GetAllItems()
+        public List<Item> GetAllItems()
         {
             return _lendingLibraryDbContext.Items.ToList();
         }

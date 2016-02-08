@@ -11,6 +11,9 @@ namespace LendingLibrary.Web.Bootstrappers.Ioc.AutoMapperProfiles
         {
             CreateMap<List<Item>, List<ItemViewModel>>();
             CreateMap<List<ItemViewModel>, List<Item>>();
+
+            CreateMap<Item, ItemViewModel>();
+            CreateMap<ItemViewModel, Item>();
         }
     }
 }

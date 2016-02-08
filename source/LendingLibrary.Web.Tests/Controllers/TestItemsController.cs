@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Mvc;
 using AutoMapper;
+using Castle.Windsor;
+using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using LendingLibrary.Tests.Common.Builders.ViewModels;
+using LendingLibrary.Web.Bootstrappers.Installers;
+using LendingLibrary.Web.Bootstrappers.Ioc;
 using LendingLibrary.Web.Controllers;
 using LendingLibrary.Web.ViewModels;
 using NSubstitute;
@@ -12,17 +17,32 @@ using NUnit.Framework;
 
 namespace LendingLibrary.Web.Tests.Controllers
 {
-    //TODO: substitute fake ItemsRepository, add auto mapper
     [TestFixture]
     public class TestItemsController
     {
+
+        private IWindsorContainer _container;
+        private readonly WindsorTestHelpers _windsorTestHelpers = new WindsorTestHelpers();
+
+        [TestFixtureSetUp]
+        public void FixtureSetup()
+        {
+            _container = _windsorTestHelpers.CreateContainerWith(new AutoMapperInstaller());
+        }
+
+        [TestFixtureTearDown]
+        public void FixtureTearDown()
+        {
+            if (_container != null) _container.Dispose();
+        }
+
         [Test]
         public void Contruct()
         {
             //---------------Set up test pack-------------------
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
-            Assert.DoesNotThrow(() => new ItemsController(Substitute.For<IItemsRepository>()));
+            Assert.DoesNotThrow(() => new ItemsController(Substitute.For<IItemsRepository>(),Substitute.For<IMappingEngine>()));
             //---------------Test Result -----------------------
         }
 
@@ -32,7 +52,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(() => new ItemsController(null));
+            var ex = Assert.Throws<ArgumentNullException>(() => new ItemsController(null, Substitute.For<IMappingEngine>()));
             //---------------Test Result -----------------------
             Assert.AreEqual("itemsRepository", ex.ParamName);
         }
@@ -49,7 +69,55 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
         }
-        
+
+        [Test]
+        public void Index_ShouldCallGetAll()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var itemsController = CreateItemsController(itemsRepository);
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = itemsController.Index();
+            //---------------Test Result -----------------------
+            itemsRepository.Received(1).GetAllItems();
+        }
+
+        [Test]
+        public void Index_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var items = new List<Item>();
+            itemsRepository.GetAllItems().Returns(items);
+
+            var itemsController = CreateItemsController(itemsRepository, mappingEngine);
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = itemsController.Index();
+            //---------------Test Result -----------------------
+            mappingEngine.Received(1).Map<List<Item>, List<ItemViewModel>>(items);
+        }
+
+        [Test]
+        public void Index_ShouldReturnViewWithViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var items = new List<Item>();
+            itemsRepository.GetAllItems().Returns(items);
+
+            var itemsController = CreateItemsController(itemsRepository, mappingEngine);
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = (ViewResult)itemsController.Index();
+            //---------------Test Result -----------------------
+            var model = result.Model;
+            Assert.IsInstanceOf<List<ItemViewModel>>(model);
+        }
+
         [Test]
         public void Create_ShouldReturnView()
         {
@@ -63,21 +131,36 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsNotNull(result);
         }
 
-        [Ignore]
+        [Test]
+        public void Create_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var itemsViewModel = new ItemViewModel();
+            var itemsController = CreateItemsController(null, mappingEngine);
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(itemsController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = itemsController.Create(itemsViewModel) as ViewResult;
+            //---------------Test Result -----------------------
+            mappingEngine.Received(1).Map<ItemViewModel, Item>(itemsViewModel);
+        }
+       
         [Test]
         public void Create_POST_GivenModelStateIsValid_ShouldCallSaveFromItemsRepo()
         {
             //---------------Set up test pack-------------------
+            var mappingEngine = _container.Resolve<IMappingEngine>();
             var itemsRepository = Substitute.For<IItemsRepository>();
             var itemViewModel = ItemsViewModelBuilder.BuildRandom();
-            var item = ItemBuilder.BuildRandom();
-            var itemsController = CreateItemsController(itemsRepository);
-
+      
+            var itemsController = CreateItemsController(itemsRepository, mappingEngine);
             //---------------Assert Precondition----------------
+            Assert.IsTrue(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
             var result = itemsController.Create(itemViewModel);
             //---------------Test Result -----------------------
-            itemsRepository.Received(1).Save(item);
+            itemsRepository.Received(1).Save(Arg.Any<Item>());
         }
 
         [Test]
@@ -85,8 +168,8 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var itemsViewModel = new ItemViewModel();
-            var itemsController = CreateItemsController();
 
+            var itemsController = CreateItemsController();
             //---------------Assert Precondition----------------
             Assert.IsTrue(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
@@ -119,7 +202,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Create_POST_ShouldHaveHttpPostAttribute()
         {
             //---------------Set up test pack-------------------
-            var methodInfo = typeof (ItemsController).GetMethod("Create", new [] {typeof (ItemViewModel)});
+            var methodInfo = typeof(ItemsController).GetMethod("Create", new[] { typeof(ItemViewModel) });
             //---------------Assert Precondition----------------
             Assert.IsNotNull(methodInfo);
             //---------------Execute Test ----------------------
@@ -128,16 +211,13 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.NotNull(httpPostAttribute);
         }
 
-        
-        
+
+
         private static ItemsController CreateItemsController(IItemsRepository itemsRepository = null, IMappingEngine mappingEngine = null)
         {
-            if (itemsRepository == null || mappingEngine == null)
-            {
-                itemsRepository = Substitute.For<IItemsRepository>();
-                mappingEngine = Substitute.For<IMappingEngine>();
-            }
-            return new ItemsController(itemsRepository);
+            itemsRepository = itemsRepository ?? Substitute.For<IItemsRepository>();
+            mappingEngine = mappingEngine ?? Substitute.For<IMappingEngine>();
+            return new ItemsController(itemsRepository, mappingEngine);
         }
     }
 }

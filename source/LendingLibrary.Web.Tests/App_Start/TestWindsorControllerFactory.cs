@@ -7,7 +7,7 @@ using Castle.Windsor;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace LendingLibrary.Web.Tests.App_Start
+namespace LendingLibrary.Web.Tests
 {
     [TestFixture]
     public class TestWindsorControllerFactory

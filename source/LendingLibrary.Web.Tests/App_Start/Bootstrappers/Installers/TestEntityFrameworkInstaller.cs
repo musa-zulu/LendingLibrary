@@ -7,7 +7,7 @@ using LendingLibrary.Web.Bootstrappers.Installers;
 using LendingLibrary.Web.Bootstrappers.Ioc;
 using NUnit.Framework;
 
-namespace LendingLibrary.Web.Tests.App_Start.Bootstrappers.Installers
+namespace LendingLibrary.Web.Tests.Bootstrappers.Installers
 {
     [TestFixture]
     public class TestEntityFrameworkInstaller
