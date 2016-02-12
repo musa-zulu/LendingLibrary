@@ -23,12 +23,20 @@ namespace LendingLibrary.DB.Repository
 
         public void Save(Item item)
         {
-            throw new NotImplementedException();
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            _lendingLibraryDbContext.Items.Add(item);
         }
 
         public Item GetById(Guid id)
         {
-            throw new NotImplementedException();
+            if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
+            return _lendingLibraryDbContext.Items.FirstOrDefault(x => x.ItemId == id);
+        }
+
+        public void DeleteItem(Item item)
+        {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+            _lendingLibraryDbContext.Items.Remove(item);
         }
     }
 }

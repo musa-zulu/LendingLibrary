@@ -60,5 +60,15 @@ namespace LendingLibrary.Web.Controllers
             _itemsRepository.Save(item);
             return RedirectToAction("Index", "Items");
         }
+
+        public ActionResult Delete(Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                var item = _itemsRepository.GetById(id);//TODO: test this line
+                _itemsRepository.DeleteItem(item);
+            }
+            return View("Index");
+        }
     }
 }

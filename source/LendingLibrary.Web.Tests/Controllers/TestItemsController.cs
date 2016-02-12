@@ -398,6 +398,40 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsInstanceOf<ItemViewModel>(model);
         }
 
+        [Test]
+        public void Delete_GivenItemIdIsEmpty_ShouldReturnView()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                        .WithItemsRepository(itemsRepository)
+                                        .Build();
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var result = itemsControllerBuilder.Delete(Guid.Empty);
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Delete_GivenAValidId_ShouldCallDeleteByThatId()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                        .WithItemsRepository(itemsRepository)
+                                        .Build();
+            var item = ItemBuilder.BuildRandom();
+            itemsRepository.GetById(item.ItemId).Returns(item);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            itemsControllerBuilder.Delete(item.ItemId);
+            //---------------Test Result -----------------------
+            itemsRepository.Received(1).DeleteItem(item);
+        }
+
+
         private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
             return new ItemsControllerBuilder();
