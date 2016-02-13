@@ -33,18 +33,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var model = result.Model;
             Assert.IsInstanceOf<List<ItemViewModel>>(model);
         }
-        [Ignore("")]
-        [Test]
-        public void Create_ShouldReturnViewModel()
-        {
-            //---------------Set up test pack-------------------
-            var homeController = CreateHomeController();
-            //---------------Assert Precondition----------------
-            //---------------Execute Test ----------------------
-            var result = (ViewResult)homeController.Create();
-            //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-        }
+       
 
         private static HomeController CreateHomeController()
         {

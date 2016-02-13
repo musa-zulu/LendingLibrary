@@ -1,6 +1,6 @@
 ﻿namespace LendingLibrary.Web.ViewModels
 {
-    public class PersonViewModel
+    public class PersonViewModel : ViewModelBase
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

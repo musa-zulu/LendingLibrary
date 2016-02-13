@@ -2,7 +2,7 @@
 
 namespace LendingLibrary.Web.ViewModels
 {
-    public class ItemViewModel
+    public class ItemViewModel : ViewModelBase
     {
         [DisplayName("Item Name")]
         public string ItemName { get; set; }

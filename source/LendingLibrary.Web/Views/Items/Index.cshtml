@@ -1,8 +1,46 @@
-﻿@model List<LendingLibrary.Web.ViewModels.ItemViewModel>
+﻿@model IEnumerable<LendingLibrary.Web.ViewModels.ItemViewModel>
 
 @{
     ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/_ViewStart.cshtml";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2>People Management</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ItemName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PersonName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DaysLentOut)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DaysLentOut )
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>

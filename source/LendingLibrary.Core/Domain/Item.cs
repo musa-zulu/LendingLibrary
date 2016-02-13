@@ -2,9 +2,8 @@
 
 namespace LendingLibrary.Core.Domain
 {
-    public class Item
+    public class Item : EntityBase
     {
-        public Guid ItemId { get; set; }
         public string ItemName { get; set; }
     }
 }

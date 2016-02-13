@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Castle.Core;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
@@ -37,9 +38,10 @@ namespace LendingLibrary.Web
             container.Register(Classes.FromThisAssembly()
               .BasedOn<IController>()
               .LifestyleTransient());
-            
-            container.Register(Component.For<IItemsRepository>()
-                     .ImplementedBy<ItemsRepository>());
+
+            /*container.Register(Component.For<IItemsRepository>()
+                .ImplementedBy<ItemsRepository>()
+                .LifestyleSingleton());*/
             SetControllerFactory(container);
 
             return container;

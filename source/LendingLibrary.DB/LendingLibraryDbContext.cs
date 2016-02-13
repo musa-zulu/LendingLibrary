@@ -17,7 +17,7 @@ namespace LendingLibrary.DB
         }
 
         public LendingLibraryDbContext(string nameOrConnectionString = null)
-            :base(nameOrConnectionString ?? "Name=DefaultConnection")
+            :base(nameOrConnectionString ?? "Name=LendingLibraryWebContext")
         {
         }
 

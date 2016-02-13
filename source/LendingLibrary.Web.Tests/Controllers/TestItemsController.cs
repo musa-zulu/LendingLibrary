@@ -249,7 +249,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
             var item = ItemBuilder.BuildRandom();
-            var id = item.ItemId;
+            var id = item.Id;
             itemsRepository.GetById(id).Returns(item);
 
             var itemsController = CreateItemsControllerBuilder()
@@ -270,7 +270,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var itemsRepository = Substitute.For<IItemsRepository>();
             var mappingEngine = Substitute.For<IMappingEngine>();
             var item = ItemBuilder.BuildRandom();
-            var id = item.ItemId;
+            var id = item.Id;
             itemsRepository.GetById(id).Returns(item);
 
             var itemsController = CreateItemsControllerBuilder()
@@ -292,7 +292,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var itemsRepository = Substitute.For<IItemsRepository>();
             var mappingEngine = _container.Resolve<IMappingEngine>();
             var item = new ItemBuilder().WithRandomProps().Build();
-            var id = item.ItemId;
+            var id = item.Id;
             itemsRepository.GetById(id).Returns(item);
 
             var itemsController = CreateItemsControllerBuilder()

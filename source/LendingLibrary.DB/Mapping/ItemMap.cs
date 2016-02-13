@@ -8,10 +8,10 @@ namespace LendingLibrary.DB.Mapping
     {
         public ItemMap()
         {
-            HasKey(it => it.ItemId);
+            HasKey(it => it.Id);
 
             ToTable(ItemTable.TableName);
-            Property(p => p.ItemId).HasColumnName(ItemTable.Columns.ItemId);
+            Property(p => p.Id).HasColumnName(ItemTable.Columns.ItemId);
             Property(p => p.ItemName).HasColumnName(ItemTable.Columns.ItemName);
         }
     }
