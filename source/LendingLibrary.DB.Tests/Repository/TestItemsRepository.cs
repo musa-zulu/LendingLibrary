@@ -135,14 +135,14 @@ namespace LendingLibrary.DB.Tests.Repository
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
             
-            itemsRepository.GetById(item.ItemId).Returns(item);
+            itemsRepository.GetById(item.Id).Returns(item);
 
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = itemsRepository.GetById(item.ItemId);
+            var result = itemsRepository.GetById(item.Id);
             //---------------Test Result -----------------------
-            var itemsFromRepo = itemsRepository.GetAllItems().FirstOrDefault(x => x.ItemId == item.ItemId);
+            var itemsFromRepo = itemsRepository.GetAllItems().FirstOrDefault(x => x.Id == item.Id);
             Assert.AreEqual(itemsFromRepo, result);
         }
 

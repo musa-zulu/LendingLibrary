@@ -422,11 +422,11 @@ namespace LendingLibrary.Web.Tests.Controllers
                                         .WithItemsRepository(itemsRepository)
                                         .Build();
             var item = ItemBuilder.BuildRandom();
-            itemsRepository.GetById(item.ItemId).Returns(item);
+            itemsRepository.GetById(item.Id).Returns(item);
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            itemsControllerBuilder.Delete(item.ItemId);
+            itemsControllerBuilder.Delete(item.Id);
             //---------------Test Result -----------------------
             itemsRepository.Received(1).DeleteItem(item);
         }

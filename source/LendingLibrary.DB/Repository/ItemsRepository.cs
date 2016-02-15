@@ -30,7 +30,7 @@ namespace LendingLibrary.DB.Repository
         public Item GetById(Guid id)
         {
             if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
-            return _lendingLibraryDbContext.Items.FirstOrDefault(x => x.ItemId == id);
+            return _lendingLibraryDbContext.Items.FirstOrDefault(x => x.Id == id);
         }
 
         public void DeleteItem(Item item)
