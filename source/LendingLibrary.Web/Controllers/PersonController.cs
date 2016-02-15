@@ -29,76 +29,74 @@ namespace LendingLibrary.Web.Controllers
             return View(personViewModels);
         }
 
-        /*   // GET: Person/Create
-           public ActionResult Create()
-           {
-               return View();
-           }
+        // GET: Person/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
 
-           [HttpPost]
-           [ValidateAntiForgeryToken]
-           public ActionResult Create(PersonViewModel personViewModel)
-           {
-               if (ModelState.IsValid)
-               {
-                   return RedirectToAction("Index");
-               }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(PersonViewModel personViewModel)
+        {
+            if (!ModelState.IsValid) return View(personViewModel);
+            var person = _mappingEngine.Map<PersonViewModel, Person>(personViewModel);
+            _personRepository.Save(person);
+            return RedirectToAction("Index");
+        }
 
-               return View(personViewModel);
-           }
+        // GET: Person/Edit/5
+        /*       public ActionResult Edit(Guid? id)
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Person person = db.People.Find(id);
+                if (person == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(person);
+            }
 
-           // GET: Person/Edit/5
-           public ActionResult Edit(Guid? id)
-           {
-               if (id == null)
-               {
-                   return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-               }
-               Person person = db.People.Find(id);
-               if (person == null)
-               {
-                   return HttpNotFound();
-               }
-               return View(person);
-           }
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public ActionResult Edit(Person personViewModel)
+            {
+                /*  if (ModelState.IsValid)
+                  {
+                      db.Entry(person).State = EntityState.Modified;
+                      db.SaveChanges();
+                      return RedirectToAction("Index");
+                  }#1#
+                return View(personViewModel);
+            }
 
-           [HttpPost]
-           [ValidateAntiForgeryToken]
-           public ActionResult Edit(Person personViewModel)
-           {
-               /*  if (ModelState.IsValid)
-                 {
-                     db.Entry(person).State = EntityState.Modified;
-                     db.SaveChanges();
-                     return RedirectToAction("Index");
-                 }#1#
-               return View(personViewModel);
-           }
+            // GET: Person/Delete/5
+            public ActionResult Delete(Guid? id)
+            {
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+              //  Person person = db.People.Find(id);
+              //  if (person == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(personViewModel);
+            }
 
-           // GET: Person/Delete/5
-           public ActionResult Delete(Guid? id)
-           {
-               if (id == null)
-               {
-                   return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-               }
-             //  Person person = db.People.Find(id);
-             //  if (person == null)
-               {
-                   return HttpNotFound();
-               }
-               return View(personViewModel);
-           }
-
-           // POST: Person/Delete/5
-           [HttpPost, ActionName("Delete")]
-           [ValidateAntiForgeryToken]
-           public ActionResult DeleteConfirmed(Guid id)
-           {
-             //  Person person = db.People.Find(id);
-           //    db.People.Remove(person);
-           //    db.SaveChanges();
-               return RedirectToAction("Index");
-           }S*/
+            // POST: Person/Delete/5
+            [HttpPost, ActionName("Delete")]
+            [ValidateAntiForgeryToken]
+            public ActionResult DeleteConfirmed(Guid id)
+            {
+              //  Person person = db.People.Find(id);
+            //    db.People.Remove(person);
+            //    db.SaveChanges();
+                return RedirectToAction("Index");
+            }S*/
     }
 }

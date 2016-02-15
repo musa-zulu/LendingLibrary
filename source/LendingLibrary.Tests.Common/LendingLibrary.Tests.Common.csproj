@@ -107,6 +107,7 @@
     <Compile Include="Builders\Domain\PersonBuilder.cs" />
     <Compile Include="Builders\LendingLibraryDbContextBuilder.cs" />
     <Compile Include="Builders\ViewModels\ItemsViewModelBuilder.cs" />
+    <Compile Include="Builders\ViewModels\PersonViewModelBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
