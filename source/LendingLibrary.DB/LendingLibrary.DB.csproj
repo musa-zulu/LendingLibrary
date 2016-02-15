@@ -52,6 +52,7 @@
     <Compile Include="FakeRepository\PersonRepository.cs" />
     <Compile Include="LendingLibraryDbContext.cs" />
     <Compile Include="Mapping\ItemMap.cs" />
+    <Compile Include="Mapping\PersonMap.cs" />
     <Compile Include="Repository\ItemsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TempDbContext.cs" />

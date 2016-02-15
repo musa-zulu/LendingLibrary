@@ -7,6 +7,7 @@ using LendingLibrary.DB.Repository;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using NSubstitute;
 using NUnit.Framework;
+using PeanutButter.Utils;
 
 namespace LendingLibrary.DB.Tests.Repository
 {
@@ -122,27 +123,28 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Test Result -----------------------
             Assert.AreEqual("id", ex.ParamName);
         }
-        [Ignore("failing : System.ArgumentNullException : Value cannot be null. Parameter name: arguments")]
+
+        [Ignore]
         [Test]
         public void GetById_GivenValidId_ShoulReturnItemWithMatchingId()
         {
             //---------------Set up test pack-------------------
             var items = new List<Item>();
-            var item = new ItemBuilder().WithRandomProps().Build();
-            items.Add(item);
-
+            var item1 = new ItemBuilder().WithRandomProps().Build();
+          
+            items.Add(item1);
+          
             var dbSet = CreateDbSetWithAddRemoveSupport(items);
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
-            
-            itemsRepository.GetById(item.Id).Returns(item);
+            //itemsRepository.GetById(item1.Id).Returns(item1);
 
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = itemsRepository.GetById(item.Id);
+            var result = itemsRepository.GetById(item1.Id);
             //---------------Test Result -----------------------
-            var itemsFromRepo = itemsRepository.GetAllItems().FirstOrDefault(x => x.Id == item.Id);
+            var itemsFromRepo = itemsRepository.GetAllItems().FirstOrDefault(x => x.Id == item1.Id);
             Assert.AreEqual(itemsFromRepo, result);
         }
 
@@ -174,7 +176,7 @@ namespace LendingLibrary.DB.Tests.Repository
             var dbSet = CreateDbSetWithAddRemoveSupport(items);
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
-         
+
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
@@ -192,17 +194,17 @@ namespace LendingLibrary.DB.Tests.Repository
         private static IDbSet<Item> CreateDbSetWithAddRemoveSupport(List<Item> items)
         {
             var dbSet = Substitute.For<IDbSet<Item>>();
-
+            
             dbSet.Add(Arg.Any<Item>()).Returns(info =>
             {
                 items.Add(info.ArgAt<Item>(0));
                 return info.ArgAt<Item>(0);
             });
 
-           /* dbSet.FirstOrDefault(x => x.ItemId == Arg.Any<Item>().ItemId).Returns(info =>
-              {
-                  return info != null ? items.FirstOrDefault(item => item.ItemId == info.ArgAt<Item>(0).ItemId) : null;
-              });*/
+           /* dbSet.First(x => x.Id == Arg.Any<Item>().Id).Returns(info =>
+            {
+                return items.FirstOrDefault(item => item.Id == info.ArgAt<Item>(0).Id);
+            });*/
 
             dbSet.Remove(Arg.Any<Item>()).Returns(info =>
             {

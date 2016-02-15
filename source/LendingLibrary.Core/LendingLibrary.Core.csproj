@@ -43,6 +43,7 @@
     <Compile Include="Domain\Item.cs" />
     <Compile Include="Domain\Person.cs" />
     <Compile Include="Interfaces\Repositories\IItemsRepository.cs" />
+    <Compile Include="Interfaces\Repositories\IPersonRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
