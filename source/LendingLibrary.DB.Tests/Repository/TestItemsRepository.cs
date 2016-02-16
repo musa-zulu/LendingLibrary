@@ -196,7 +196,7 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = itemsRepository.GetById(item1.Id);
+            var result = itemsRepository.GetById(item.Id);
             //---------------Test Result -----------------------
             Assert.AreEqual(item1, result);
         }
