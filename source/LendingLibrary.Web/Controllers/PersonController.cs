@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
 using LendingLibrary.Core.Domain;
@@ -46,57 +47,57 @@ namespace LendingLibrary.Web.Controllers
         }
 
         // GET: Person/Edit/5
-        /*       public ActionResult Edit(Guid? id)
+        public ActionResult Edit(Guid? id)
+        {
+            if (id == Guid.Empty)
             {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-                Person person = db.People.Find(id);
-                if (person == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(person);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public ActionResult Edit(Person personViewModel)
+            Person person = new Person();//db.People.Find(id);
+            if (person == null)
             {
-                /*  if (ModelState.IsValid)
-                  {
-                      db.Entry(person).State = EntityState.Modified;
-                      db.SaveChanges();
-                      return RedirectToAction("Index");
-                  }#1#
-                return View(personViewModel);
+                return HttpNotFound();
             }
+            return View(person);
+        }
 
-            // GET: Person/Delete/5
-            public ActionResult Delete(Guid? id)
-            {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-              //  Person person = db.People.Find(id);
-              //  if (person == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(personViewModel);
-            }
+        /*     [HttpPost]
+           [ValidateAntiForgeryToken]
+           public ActionResult Edit(Person personViewModel)
+           {
+               /*  if (ModelState.IsValid)
+                 {
+                     db.Entry(person).State = EntityState.Modified;
+                     db.SaveChanges();
+                     return RedirectToAction("Index");
+                 }#1#
+               return View(personViewModel);
+           }
 
-            // POST: Person/Delete/5
-            [HttpPost, ActionName("Delete")]
-            [ValidateAntiForgeryToken]
-            public ActionResult DeleteConfirmed(Guid id)
-            {
-              //  Person person = db.People.Find(id);
-            //    db.People.Remove(person);
-            //    db.SaveChanges();
-                return RedirectToAction("Index");
-            }S*/
+           // GET: Person/Delete/5
+           public ActionResult Delete(Guid? id)
+           {
+               if (id == null)
+               {
+                   return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+               }
+             //  Person person = db.People.Find(id);
+             //  if (person == null)
+               {
+                   return HttpNotFound();
+               }
+               return View(personViewModel);
+           }
+
+           // POST: Person/Delete/5
+           [HttpPost, ActionName("Delete")]
+           [ValidateAntiForgeryToken]
+           public ActionResult DeleteConfirmed(Guid id)
+           {
+             //  Person person = db.People.Find(id);
+           //    db.People.Remove(person);
+           //    db.SaveChanges();
+               return RedirectToAction("Index");
+           }S*/
     }
 }

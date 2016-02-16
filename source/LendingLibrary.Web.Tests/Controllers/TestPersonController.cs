@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Reflection;
 using System.Web.Mvc;
 using AutoMapper;
@@ -266,6 +267,7 @@ namespace LendingLibrary.Web.Tests.Controllers
                                     .WithPersonRepository(personRepository)
                                     .Build();
             personController.ModelState.AddModelError("key", "some error");
+
             //---------------Assert Precondition----------------
             Assert.IsFalse(personController.ModelState.IsValid);
             //---------------Execute Test ----------------------
@@ -273,6 +275,24 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             var model = result.Model;
             Assert.IsInstanceOf<PersonViewModel>(model);           
+        }
+
+        [Test]
+        public void Edit_GivenIdIsNull_ShouldReturnReturnBadRequest()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var personController = CreatePersonController()
+                                    .WithPersonRepository(personRepository)
+                                    .Build();
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(Guid.Empty) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         private static PersonControllerBuilder CreatePersonController()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using LendingLibrary.Core.Domain;
@@ -124,17 +125,70 @@ namespace LendingLibrary.DB.Tests.Repository
             Assert.AreEqual("id", ex.ParamName);
         }
 
+        public class FakeDbSet<T> : EnumerableQuery<T>, IDbSet<T> where T : class, new()
+        {
+            readonly ObservableCollection<T> _collection;
+
+            private static ObservableCollection<T> CreateDefaultCollection(IEnumerable<T> enumerable)
+            {
+                return enumerable != null ? new ObservableCollection<T>(enumerable) : new ObservableCollection<T>();
+            }
+
+            public FakeDbSet(IEnumerable<T> enumerable = null) : this(CreateDefaultCollection(enumerable))
+            {
+            }
+
+            private FakeDbSet(ObservableCollection<T> collection) : base(collection)
+            {
+                _collection = collection;
+            }
+
+            public ObservableCollection<T> Local
+            {
+                get { return _collection; }
+            }
+
+            public T Add(T entity)
+            {
+                _collection.Add(entity);
+                return entity;
+            }
+
+            public T Attach(T entity)
+            {
+                _collection.Add(entity);
+                return entity;
+            }
+
+            public T Create()
+            {
+                return new T();
+            }
+
+            public TDerivedEntity Create<TDerivedEntity>() 
+                where TDerivedEntity : class, T
+            {
+                throw new NotImplementedException();
+            }
+
+            public T Find(params object[] keyValues)
+            {
+                throw new NotImplementedException();
+            }
+
+            public T Remove(T entity)
+            {
+                return _collection.Remove(entity) ? entity : null;
+            }
+        }
+
         [Ignore]
         [Test]
         public void GetById_GivenValidId_ShoulReturnItemWithMatchingId()
         {
             //---------------Set up test pack-------------------
-            var items = new List<Item>();
             var item1 = new ItemBuilder().WithRandomProps().Build();
-          
-            items.Add(item1);
-          
-            var dbSet = CreateDbSetWithAddRemoveSupport(items);
+            var dbSet = new FakeDbSet<Item> {item1}; //CreateDbSetWithAddRemoveSupport(items);
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
             //itemsRepository.GetById(item1.Id).Returns(item1);
@@ -144,8 +198,7 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Execute Test ----------------------
             var result = itemsRepository.GetById(item1.Id);
             //---------------Test Result -----------------------
-            var itemsFromRepo = itemsRepository.GetAllItems().FirstOrDefault(x => x.Id == item1.Id);
-            Assert.AreEqual(itemsFromRepo, result);
+            Assert.AreEqual(item1, result);
         }
 
         [Test]
