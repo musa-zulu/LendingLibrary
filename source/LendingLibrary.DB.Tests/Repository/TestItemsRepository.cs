@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using LendingLibrary.Core.Domain;
@@ -8,7 +7,6 @@ using LendingLibrary.DB.Repository;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using NSubstitute;
 using NUnit.Framework;
-using PeanutButter.Utils;
 
 namespace LendingLibrary.DB.Tests.Repository
 {
@@ -124,81 +122,22 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Test Result -----------------------
             Assert.AreEqual("id", ex.ParamName);
         }
-
-        public class FakeDbSet<T> : EnumerableQuery<T>, IDbSet<T> where T : class, new()
-        {
-            readonly ObservableCollection<T> _collection;
-
-            private static ObservableCollection<T> CreateDefaultCollection(IEnumerable<T> enumerable)
-            {
-                return enumerable != null ? new ObservableCollection<T>(enumerable) : new ObservableCollection<T>();
-            }
-
-            public FakeDbSet(IEnumerable<T> enumerable = null) : this(CreateDefaultCollection(enumerable))
-            {
-            }
-
-            private FakeDbSet(ObservableCollection<T> collection) : base(collection)
-            {
-                _collection = collection;
-            }
-
-            public ObservableCollection<T> Local
-            {
-                get { return _collection; }
-            }
-
-            public T Add(T entity)
-            {
-                _collection.Add(entity);
-                return entity;
-            }
-
-            public T Attach(T entity)
-            {
-                _collection.Add(entity);
-                return entity;
-            }
-
-            public T Create()
-            {
-                return new T();
-            }
-
-            public TDerivedEntity Create<TDerivedEntity>() 
-                where TDerivedEntity : class, T
-            {
-                throw new NotImplementedException();
-            }
-
-            public T Find(params object[] keyValues)
-            {
-                throw new NotImplementedException();
-            }
-
-            public T Remove(T entity)
-            {
-                return _collection.Remove(entity) ? entity : null;
-            }
-        }
-
-        [Ignore]
+        
         [Test]
         public void GetById_GivenValidId_ShoulReturnItemWithMatchingId()
         {
             //---------------Set up test pack-------------------
-            var item1 = new ItemBuilder().WithRandomProps().Build();
-            var dbSet = new FakeDbSet<Item> {item1}; //CreateDbSetWithAddRemoveSupport(items);
+            var item = new ItemBuilder().WithRandomProps().Build();
+            var dbSet = new FakeDbSet<Item> {item}; 
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
-            //itemsRepository.GetById(item1.Id).Returns(item1);
-
+        
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
             var result = itemsRepository.GetById(item.Id);
             //---------------Test Result -----------------------
-            Assert.AreEqual(item1, result);
+            Assert.AreEqual(item, result);
         }
 
         [Test]
@@ -253,12 +192,7 @@ namespace LendingLibrary.DB.Tests.Repository
                 items.Add(info.ArgAt<Item>(0));
                 return info.ArgAt<Item>(0);
             });
-
-           /* dbSet.First(x => x.Id == Arg.Any<Item>().Id).Returns(info =>
-            {
-                return items.FirstOrDefault(item => item.Id == info.ArgAt<Item>(0).Id);
-            });*/
-
+            
             dbSet.Remove(Arg.Any<Item>()).Returns(info =>
             {
                 items.Remove(info.ArgAt<Item>(0));

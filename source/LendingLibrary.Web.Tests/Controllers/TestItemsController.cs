@@ -414,7 +414,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         }
 
         [Test]
-        public void Delete_GivenAValidId_ShouldCallDeleteByThatId()
+        public void Delete_GivenAValidId_ShouldCallGetById()
         {
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
@@ -422,7 +422,25 @@ namespace LendingLibrary.Web.Tests.Controllers
                                         .WithItemsRepository(itemsRepository)
                                         .Build();
             var item = ItemBuilder.BuildRandom();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            itemsControllerBuilder.Delete(item.Id);
+            //---------------Test Result -----------------------
+            itemsRepository.Received(1).GetById(item.Id);
+        }
+        
+
+        [Test]
+        public void Delete_GivenAValidId_ShouldCallDeleteItem()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var item = ItemBuilder.BuildRandom();
             itemsRepository.GetById(item.Id).Returns(item);
+            var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                        .WithItemsRepository(itemsRepository)
+                                        .Build();
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
@@ -430,8 +448,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             itemsRepository.Received(1).DeleteItem(item);
         }
-
-
+        
         private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
             return new ItemsControllerBuilder();

@@ -65,7 +65,7 @@ namespace LendingLibrary.Web.Controllers
         {
             if (id != Guid.Empty)
             {
-                var item = _itemsRepository.GetById(id);//TODO: test this line
+                var item = _itemsRepository.GetById(id);
                 _itemsRepository.DeleteItem(item);
             }
             return View("Index");
