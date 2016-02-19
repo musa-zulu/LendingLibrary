@@ -7,8 +7,8 @@ namespace LendingLibrary.Core.Interfaces.Repositories
     public interface IPersonRepository
     {
         List<Person> GetAllPeople();
-        void Save(Person item);
+        void Save(Person person);
         Person GetById(Guid id);
-        void DeleteItem(Person item);
+        void DeletePerson(Person person);
     }
 }
