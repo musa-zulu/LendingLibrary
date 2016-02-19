@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Web", "LendingLibrary.Web\LendingLibrary.Web.csproj", "{E565F80B-7A68-49BF-9D66-703C4CCB380D}"
 EndProject
@@ -22,13 +22,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.DB.Tests", "LendingLibrary.DB.Tests\LendingLibrary.DB.Tests.csproj", "{5F018373-A69F-4A29-A366-3111D51C3A6C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Tests.Common", "LendingLibrary.Tests.Common\LendingLibrary.Tests.Common.csproj", "{34D6A048-1996-41AE-B62E-4A77D150EAD6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{79D92AF7-8C18-4C63-9BF8-3FA256CB55E8}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
