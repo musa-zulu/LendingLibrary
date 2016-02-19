@@ -131,9 +131,7 @@ namespace LendingLibrary.DB.Tests.Repository
             var dbSet = new FakeDbSet<Item> {item}; 
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
-        
             //---------------Assert Precondition----------------
-
             //---------------Execute Test ----------------------
             var result = itemsRepository.GetById(item.Id);
             //---------------Test Result -----------------------
