@@ -5,7 +5,7 @@ using Castle.MicroKernel;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 
-namespace LendingLibrary.Web.Bootstrappers.Ioc
+namespace LendingLibrary.Tests.Common.Helpers
 {
     public class WindsorTestHelpers
     {

@@ -25,6 +25,18 @@
                     public const string Email = "Email";
                 }
             }
+
+            public class Common
+            {
+                public class Columns
+                {
+                    public const string DateCreated = "DateCreated";
+                    public const string CreatedUsername = "CreatedUsername";
+                    public const string DateLastModified = "DateLastModified";
+                    public const string LastModifiedUsername = "LastModifiedUsername";
+
+                }
+            }
         }
     }
 }

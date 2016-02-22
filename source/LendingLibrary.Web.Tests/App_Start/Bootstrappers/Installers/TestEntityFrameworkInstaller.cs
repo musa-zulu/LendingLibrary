@@ -3,8 +3,8 @@ using Castle.Core;
 using Castle.Core.Internal;
 using Castle.Windsor;
 using LendingLibrary.DB;
+using LendingLibrary.Tests.Common.Helpers;
 using LendingLibrary.Web.Bootstrappers.Installers;
-using LendingLibrary.Web.Bootstrappers.Ioc;
 using NUnit.Framework;
 
 namespace LendingLibrary.Web.Tests.Bootstrappers.Installers

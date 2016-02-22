@@ -1,12 +1,12 @@
-﻿using System.Web;
+﻿using System.Configuration;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Castle.Core;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
-using LendingLibrary.Web.Repository;
+using LendingLibrary.DB.Migrations;
 
 namespace LendingLibrary.Web
 {
@@ -18,6 +18,10 @@ namespace LendingLibrary.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            var connectionStringSettings = ConfigurationManager.ConnectionStrings["LendingLibraryWebContext"];
+            DBMigrationsRunner runner = new DBMigrationsRunner(connectionStringSettings.ConnectionString);
+            runner.MigrateToLatest();
             Boostrap();
         }
 
@@ -38,10 +42,7 @@ namespace LendingLibrary.Web
             container.Register(Classes.FromThisAssembly()
               .BasedOn<IController>()
               .LifestyleTransient());
-
-            /*container.Register(Component.For<IItemsRepository>()
-                .ImplementedBy<ItemsRepository>()
-                .LifestyleSingleton());*/
+            
             SetControllerFactory(container);
 
             return container;

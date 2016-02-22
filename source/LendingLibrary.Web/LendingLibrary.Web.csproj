@@ -25,7 +25,6 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -135,10 +134,10 @@
   <ItemGroup>
     <Compile Include="App_Start\Bootstrappers\Installers\AutoMapperInstaller.cs" />
     <Compile Include="App_Start\Bootstrappers\Installers\EntityFrameworkInstaller.cs" />
+    <Compile Include="App_Start\Bootstrappers\Installers\MigrationsInstaller.cs" />
     <Compile Include="App_Start\Bootstrappers\Installers\RepositoryInstallers.cs" />
     <Compile Include="App_Start\Bootstrappers\Ioc\AutoMapperProfiles\ItemsMappings.cs" />
     <Compile Include="App_Start\Bootstrappers\Ioc\AutoMapperProfiles\PersonMapping.cs" />
-    <Compile Include="App_Start\Bootstrappers\Ioc\WindsorTestHelpers.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -220,6 +219,10 @@
     <ProjectReference Include="..\LendingLibrary.Core\LendingLibrary.Core.csproj">
       <Project>{F1C5D8F5-A291-4865-9BA4-E21341778021}</Project>
       <Name>LendingLibrary.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LendingLibrary.DB.Migrations\LendingLibrary.DB.Migrations.csproj">
+      <Project>{15a6b0a0-faf2-4e2b-bf7b-e8d472409bad}</Project>
+      <Name>LendingLibrary.DB.Migrations</Name>
     </ProjectReference>
     <ProjectReference Include="..\LendingLibrary.DB\LendingLibrary.DB.csproj">
       <Project>{55157C48-EDF3-4D04-920B-6EE9799F2AD9}</Project>

@@ -20,6 +20,7 @@ namespace LendingLibrary.DB
         public LendingLibraryDbContext(string nameOrConnectionString = null)
             :base(nameOrConnectionString ?? "Name=LendingLibraryWebContext")
         {
+            // Data Source=MUSA;Initial Catalog=LendingLibrary;User ID=sa
         }
 
         public IDbSet<Item> Items { get; set; }
