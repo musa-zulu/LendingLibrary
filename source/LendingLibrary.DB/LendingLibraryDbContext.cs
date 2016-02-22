@@ -8,6 +8,7 @@ namespace LendingLibrary.DB
     {
         IDbSet<Item> Items { get; set; }
         IDbSet<Person> People { get; set; }
+        int SaveChanges();
     }
 
     public class LendingLibraryDbContext : DbContext, ILendingLibraryDbContext

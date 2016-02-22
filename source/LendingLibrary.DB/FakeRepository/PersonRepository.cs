@@ -23,18 +23,22 @@ namespace LendingLibrary.DB.FakeRepository
 
         public void Save(Person person)
         {
-           if(person == null) throw new ArgumentNullException(nameof(person));
+            if (person == null) throw new ArgumentNullException(nameof(person));
             _lendingLibraryDbContext.People.Add(person);
+            _lendingLibraryDbContext.SaveChanges();
         }
 
         public Person GetById(Guid id)
         {
-            throw new NotImplementedException();
+            if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
+            return _lendingLibraryDbContext.People.FirstOrDefault(p => p.Id == id);
         }
 
         public void DeletePerson(Person person)
         {
-            throw new NotImplementedException();
+            if (person == null) throw new ArgumentNullException(nameof(person));
+            _lendingLibraryDbContext.People.Remove(person);
+            _lendingLibraryDbContext.SaveChanges();
         }
     }
 }

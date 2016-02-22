@@ -5,6 +5,7 @@ using System.Linq;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.DB.FakeRepository;
 using LendingLibrary.Tests.Common.Builders.Domain;
+using LendingLibrary.Tests.Common.Helpers;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -102,7 +103,100 @@ namespace LendingLibrary.DB.Tests.Repository
             Assert.AreEqual(1, peopleFromRepo.Count);
             Assert.AreEqual(person.Id, peopleFromRepo.First().Id);
             CollectionAssert.Contains(peopleFromRepo, person);
-        }   
+        }
+
+        [Test]
+        public void Save_GivenValidPersonObject_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var person = PersonBuilder.BuildRandom();
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            personRepository.Save(person);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
+        }
+
+        [Test]
+        public void GetById_GivenInvalidId_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.GetById(Guid.Empty));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("id", ex.ParamName);
+        }
+
+        [Test]
+        public void GetById_GivenValidId_ShouldReturnPersonWithMatchingId()
+        {
+            //---------------Set up test pack-------------------
+            var person = PersonBuilder.BuildRandom();
+            var dbSet= new FakeDbSet<Person> {person};
+
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personRepository.GetById(person.Id);
+            //---------------Test Result -----------------------
+            Assert.AreEqual(person, result);
+        }
+
+        [Test]
+        public void DeletePerson_GivenInvalidPerson_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(()=> personRepository.DeletePerson(null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("person", ex.ParamName);
+        }
+
+        [Test]
+        public void DeletePerson_GivenValidPersonObject_ShouldDeleteThePerson()
+        {
+            //---------------Set up test pack-------------------
+            var person = PersonBuilder.BuildRandom();
+            var dbSet = new FakeDbSet<Person> { person };
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            personRepository.DeletePerson(person);
+            //---------------Test Result -----------------------
+            var peopleFromRepo = personRepository.GetAllPeople();
+            CollectionAssert.DoesNotContain(peopleFromRepo, person);
+        }
+
+        [Test]
+        public void DeletePerson_GivenAPersonHasBeenDeleted_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var person = PersonBuilder.BuildRandom();
+            var dbSet = new FakeDbSet<Person> { person };
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            personRepository.DeletePerson(person);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
+        }
 
         private static PersonRepository CreatePersonRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
