@@ -134,7 +134,6 @@
   <ItemGroup>
     <Compile Include="App_Start\Bootstrappers\Installers\AutoMapperInstaller.cs" />
     <Compile Include="App_Start\Bootstrappers\Installers\EntityFrameworkInstaller.cs" />
-    <Compile Include="App_Start\Bootstrappers\Installers\MigrationsInstaller.cs" />
     <Compile Include="App_Start\Bootstrappers\Installers\RepositoryInstallers.cs" />
     <Compile Include="App_Start\Bootstrappers\Ioc\AutoMapperProfiles\ItemsMappings.cs" />
     <Compile Include="App_Start\Bootstrappers\Ioc\AutoMapperProfiles\PersonMapping.cs" />
