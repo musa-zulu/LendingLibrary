@@ -23,6 +23,8 @@
                     public const string FirstName = "FirstName";
                     public const string LastName = "LastName";
                     public const string Email = "Email";
+                    public const string Photo = "Photo";
+                    public const string PhoneNumber = "PhoneNumber";
                 }
             }
 

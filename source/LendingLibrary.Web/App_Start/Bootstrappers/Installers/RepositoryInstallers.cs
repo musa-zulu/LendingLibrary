@@ -13,6 +13,9 @@ namespace LendingLibrary.Web.Bootstrappers.Installers
             container.Register(Component.For<IItemsRepository>()
                 .ImplementedBy<ItemsRepository>()
                 .LifestylePerWebRequest());
+            container.Register(Component.For<IPersonRepository>()
+              .ImplementedBy<PersonRepository>()
+              .LifestylePerWebRequest());
         }
     }
 }

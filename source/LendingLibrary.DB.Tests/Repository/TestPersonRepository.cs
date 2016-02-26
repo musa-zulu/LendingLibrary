@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using LendingLibrary.Core.Domain;
-using LendingLibrary.DB.FakeRepository;
+using LendingLibrary.DB.Repository;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using LendingLibrary.Tests.Common.Helpers;
 using NSubstitute;

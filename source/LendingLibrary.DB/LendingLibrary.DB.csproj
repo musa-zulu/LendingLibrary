@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbConstants.cs" />
-    <Compile Include="FakeRepository\PersonRepository.cs" />
+    <Compile Include="Repository\PersonRepository.cs" />
     <Compile Include="LendingLibraryDbContext.cs" />
     <Compile Include="Mapping\ItemMap.cs" />
     <Compile Include="Mapping\PersonMap.cs" />
@@ -68,7 +68,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="FakeRepository\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

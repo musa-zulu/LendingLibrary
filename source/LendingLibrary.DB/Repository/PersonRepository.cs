@@ -4,7 +4,7 @@ using System.Linq;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
 
-namespace LendingLibrary.DB.FakeRepository
+namespace LendingLibrary.DB.Repository
 {
     public class PersonRepository : IPersonRepository
     {

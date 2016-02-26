@@ -25,6 +25,7 @@ namespace LendingLibrary.DB.Repository
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             _lendingLibraryDbContext.Items.Add(item);
+            _lendingLibraryDbContext.SaveChanges();
         }
 
         public Item GetById(Guid id)
@@ -37,6 +38,7 @@ namespace LendingLibrary.DB.Repository
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
             _lendingLibraryDbContext.Items.Remove(item);
+            _lendingLibraryDbContext.SaveChanges();
         }
     }
 }

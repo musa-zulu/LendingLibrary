@@ -107,6 +107,24 @@ namespace LendingLibrary.DB.Tests.Repository
         }
 
         [Test]
+        public void Save_GivenValidItem_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var item = ItemBuilder.BuildRandom();
+            var items = new List<Item>();
+            var dbSet = CreateDbSetWithAddRemoveSupport(items);
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            itemsRepository.Save(item);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
+        }
+
+        [Test]
         public void GetById_GivenIdIsNull_ShouldThrowExcption()
         {
             //---------------Set up test pack-------------------
@@ -140,7 +158,7 @@ namespace LendingLibrary.DB.Tests.Repository
         }
 
         [Test]
-        public void DeleteById_GivenItemNull_ShouldThrowException()
+        public void DeleteItem_GivenItemNull_ShouldThrowException()
         {
             //---------------Set up test pack-------------------
             var lendingLibraryDbContext = CreateLendingLibraryDbContext();
@@ -158,7 +176,7 @@ namespace LendingLibrary.DB.Tests.Repository
         }
 
         [Test]
-        public void DeleteById_GivenValidItemId_ShouldDeleteItem()
+        public void DeleteItem_GivenValidItemId_ShouldDeleteItem()
         {
             //---------------Set up test pack-------------------
             var items = new List<Item>();
@@ -175,6 +193,25 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Test Result -----------------------
             var itemsFromRepo = itemsRepository.GetAllItems();
             CollectionAssert.DoesNotContain(itemsFromRepo, item);
+        }
+
+        [Test]
+        public void DeleteItem_GivenValidItem_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var items = new List<Item>();
+            var item = ItemBuilder.BuildRandom();
+
+            var dbSet = CreateDbSetWithAddRemoveSupport(items);
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            itemsRepository.DeleteItem(item);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
         }
 
         private static ItemsRepository CreateItemsRepository(ILendingLibraryDbContext lendingLibraryDbContext)
