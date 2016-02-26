@@ -28,7 +28,7 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext.SaveChanges();
         }
 
-        public Person GetById(Guid id)
+        public Person GetById(Guid? id)
         {
             if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
             return _lendingLibraryDbContext.People.FirstOrDefault(p => p.Id == id);

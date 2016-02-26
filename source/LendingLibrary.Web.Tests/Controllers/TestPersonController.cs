@@ -16,6 +16,7 @@ using LendingLibrary.Web.Controllers;
 using LendingLibrary.Web.ViewModels;
 using NSubstitute;
 using NUnit.Framework;
+using PeanutButter.RandomGenerators;
 
 namespace LendingLibrary.Web.Tests.Controllers
 {
@@ -169,7 +170,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
         }
-        
+
         [Test]
         public void Create_POST_ShouldHaveHttpPostAttribute()
         {
@@ -187,13 +188,13 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Create_POST_ShouldHaveValidAntiForgeryTokenAttribute()
         {
             //---------------Set up test pack-------------------
-            var methodInfo = typeof (PersonController).GetMethod("Create", new[] {typeof (PersonViewModel)});
+            var methodInfo = typeof(PersonController).GetMethod("Create", new[] { typeof(PersonViewModel) });
             //---------------Assert Precondition----------------
             Assert.IsNotNull(methodInfo);
             //---------------Execute Test ----------------------
             var validAntityForgeryTokenAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
             //---------------Test Result -----------------------
-           Assert.NotNull(validAntityForgeryTokenAttribute);
+            Assert.NotNull(validAntityForgeryTokenAttribute);
         }
 
         [Test]
@@ -274,7 +275,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var result = (ViewResult)personController.Create(personViewModel);
             //---------------Test Result -----------------------
             var model = result.Model;
-            Assert.IsInstanceOf<PersonViewModel>(model);           
+            Assert.IsInstanceOf<PersonViewModel>(model);
         }
 
         [Test]
@@ -293,6 +294,85 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
+        public void Edit_GivenValidId_ShouldCallGetByIdFromRepo()
+        {
+            //---------------Set up test pack-------------------
+            Guid? id = Guid.NewGuid();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .Build();
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(id);
+            //---------------Test Result -----------------------
+            personRepository.Received().GetById(id);
+        }
+
+        [Test]
+        public void Edit_GivenPersonViewModelIsNull_ShouldReturnHttpNotFoundStatus()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var personController = CreatePersonController()
+               .WithPersonRepository(personRepository)
+               .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(null) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Test]
+        public void Edit_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var person = new PersonBuilder().WithRandomProps().Build();
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(person.Id).Returns(person);
+
+            var personController = CreatePersonController()
+               .WithPersonRepository(personRepository)
+               .WithMappingEngine(mappingEngine)
+               .Build();
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(person.Id);
+            //---------------Test Result -----------------------
+            mappingEngine.Received().Map<Person, PersonViewModel>(person);
+        }
+        
+        [Test]
+        public void Edit_ShouldReturnViewWithPersonViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var person = new PersonViewModelBuilder().WithRandomProps().Build();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            personRepository.GetById(person.Id).Returns(PersonBuilder.BuildDefault());
+            var personController = CreatePersonController()
+               .WithPersonRepository(personRepository)
+               .WithMappingEngine(mappingEngine)
+               .Build();
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(person.Id);
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<PersonViewModel>(person);
         }
 
         private static PersonControllerBuilder CreatePersonController()

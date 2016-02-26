@@ -54,13 +54,26 @@ namespace LendingLibrary.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Person person = new Person();//db.People.Find(id);
-            if (person == null)
+            var person = _personRepository.GetById(id);
+            var personViewModel = _mappingEngine.Map<Person, PersonViewModel>(person);
+            if (personViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(person);
+            return View(personViewModel);
         }
+
+        /*[HttpPost]
+       public ActionResult Edit(PersonVm person)
+       {
+           if (ModelState.IsValid)
+           {
+               db.Entry(person).State = EntityState.Modified;
+               db.SaveChanges();
+               return RedirectToAction("Index");
+           }
+           return View(movie);
+       }*/
 
         /*     [HttpPost]
            [ValidateAntiForgeryToken]
@@ -100,5 +113,8 @@ namespace LendingLibrary.Web.Controllers
            //    db.SaveChanges();
                return RedirectToAction("Index");
            }S*/
+
+
+
     }
 }

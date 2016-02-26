@@ -8,7 +8,7 @@ namespace LendingLibrary.Core.Interfaces.Repositories
     {
         List<Person> GetAllPeople();
         void Save(Person person);
-        Person GetById(Guid id);
+        Person GetById(Guid? id);
         void DeletePerson(Person person);
     }
 }
