@@ -10,5 +10,6 @@ namespace LendingLibrary.Core.Interfaces.Repositories
         void Save(Person person);
         Person GetById(Guid? id);
         void DeletePerson(Person person);
+        void Update(Person person);
     }
 }

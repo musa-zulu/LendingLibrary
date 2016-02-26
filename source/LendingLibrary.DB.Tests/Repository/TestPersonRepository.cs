@@ -198,6 +198,20 @@ namespace LendingLibrary.DB.Tests.Repository
             lendingLibraryDbContext.Received().SaveChanges();
         }
 
+        [Test]
+        public void Update_GivenPersonObjectIsNull_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.Update(null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("person", ex.ParamName);
+        }
+
         private static PersonRepository CreatePersonRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
             return new PersonRepository(lendingLibraryDbContext);

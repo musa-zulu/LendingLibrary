@@ -40,5 +40,10 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext.People.Remove(person);
             _lendingLibraryDbContext.SaveChanges();
         }
+
+        public void Update(Person person)
+        {
+            if (person == null) throw new ArgumentNullException(nameof(person));
+        }
     }
 }
