@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Xml.Schema;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.DB.Repository;
 using LendingLibrary.Tests.Common.Builders.Domain;
 using LendingLibrary.Tests.Common.Helpers;
 using NSubstitute;
 using NUnit.Framework;
+using PeanutButter.RandomGenerators;
 
 namespace LendingLibrary.DB.Tests.Repository
 {
@@ -139,7 +141,7 @@ namespace LendingLibrary.DB.Tests.Repository
         {
             //---------------Set up test pack-------------------
             var person = PersonBuilder.BuildRandom();
-            var dbSet= new FakeDbSet<Person> {person};
+            var dbSet = new FakeDbSet<Person> { person };
 
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var personRepository = CreatePersonRepository(lendingLibraryDbContext);
@@ -152,7 +154,7 @@ namespace LendingLibrary.DB.Tests.Repository
         }
 
         [Test]
-        public void DeletePerson_GivenInvalidPerson_ShouldThrowException()
+        public void DeletePerson_GivenInvalidExistingPerson_ShouldThrowException()
         {
             //---------------Set up test pack-------------------
             var lendingLibraryDbContext = CreateLendingLibraryDbContext();
@@ -160,7 +162,21 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(()=> personRepository.DeletePerson(null));
+            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.DeletePerson(null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("person", ex.ParamName);
+        }
+
+        [Test]
+        public void DeletePerson_GivenInvalidNewPerson_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.DeletePerson(null));
             //---------------Test Result -----------------------
             Assert.AreEqual("person", ex.ParamName);
         }
@@ -207,9 +223,80 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.Update(null));
+            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.Update(null, new Person()));
             //---------------Test Result -----------------------
-            Assert.AreEqual("person", ex.ParamName);
+            Assert.AreEqual("existingPerson", ex.ParamName);
+        }
+
+        [Test]
+        public void Update_GivenValidPersonObject_ShouldReplaceExistingPersonObject()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => personRepository.Update(new Person(), null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("newPerson", ex.ParamName);
+        }
+
+        [Test]
+        public void Update_GivenValidExistingAndNewPersonObject_ShouldReplaceExistingPersonWithNewPersonObject()
+        {
+            //---------------Set up test pack-------------------
+            var existingPerson = new PersonBuilder()
+                .WithFirstName(RandomValueGen.GetRandomString())
+                .WithLastName(RandomValueGen.GetRandomString())
+                .WithPhoneNumber(RandomValueGen.GetRandomInt())
+                .WithPhoto(RandomValueGen.GetRandomBytes())
+                .WithRandomProps()
+                .Build();
+            var newPerson = new PersonBuilder().WithRandomProps().Build();
+
+            var dbSet = new FakeDbSet<Person> { existingPerson };
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+
+            //---------------Assert Precondition----------------
+            Assert.AreNotEqual(existingPerson.Id, newPerson.Id);
+            Assert.AreNotEqual(existingPerson.Email, newPerson.Email);
+            Assert.AreNotEqual(existingPerson.FirstName, newPerson.FirstName);
+            Assert.AreNotEqual(existingPerson.LastName, newPerson.LastName);
+            Assert.AreNotEqual(existingPerson.Photo, newPerson.Photo);
+            Assert.AreNotEqual(existingPerson.CreatedUsername, newPerson.CreatedUsername);
+            Assert.AreNotEqual(existingPerson.DateCreated, newPerson.DateCreated);
+            Assert.AreNotEqual(existingPerson.DateLastModified, newPerson.DateLastModified);
+            Assert.AreNotEqual(existingPerson.LastModifiedUsername, newPerson.LastModifiedUsername);
+            //---------------Execute Test ----------------------
+            personRepository.Update(existingPerson, newPerson);
+            //---------------Test Result -----------------------
+            Assert.AreEqual(existingPerson.Id, newPerson.Id);
+            Assert.AreEqual(existingPerson.FirstName, newPerson.FirstName);
+            Assert.AreEqual(existingPerson.LastName, newPerson.LastName);
+            Assert.AreEqual(existingPerson.PhoneNumber, newPerson.PhoneNumber);
+            Assert.AreEqual(existingPerson.Photo, newPerson.Photo);
+            Assert.AreEqual(existingPerson.CreatedUsername, newPerson.CreatedUsername);
+            Assert.AreEqual(existingPerson.DateCreated, newPerson.DateCreated);
+            Assert.AreEqual(existingPerson.DateLastModified, newPerson.DateLastModified);
+            Assert.AreEqual(existingPerson.LastModifiedUsername, newPerson.LastModifiedUsername);
+        }
+
+        [Test]
+        public void Update_GivenExistingPersonObjectHasBeenUpdated_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var existingPerson = new PersonBuilder().WithRandomProps().Build();
+            var newPerson = new PersonBuilder().WithRandomProps().Build();
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var personRepository = CreatePersonRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            personRepository.Update(existingPerson, newPerson);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
         }
 
         private static PersonRepository CreatePersonRepository(ILendingLibraryDbContext lendingLibraryDbContext)

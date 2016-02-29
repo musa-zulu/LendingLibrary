@@ -41,9 +41,22 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext.SaveChanges();
         }
 
-        public void Update(Person person)
+        public void Update(Person existingPerson, Person newPerson)
         {
-            if (person == null) throw new ArgumentNullException(nameof(person));
+            if (existingPerson == null) throw new ArgumentNullException(nameof(existingPerson));
+            if (newPerson == null) throw new ArgumentNullException(nameof(newPerson));
+
+            existingPerson.Id = newPerson.Id;
+            existingPerson.FirstName = newPerson.FirstName;
+            existingPerson.LastName = newPerson.LastName;
+            existingPerson.PhoneNumber = newPerson.PhoneNumber;
+            existingPerson.Photo = newPerson.Photo;
+            existingPerson.CreatedUsername = newPerson.CreatedUsername;
+            existingPerson.DateCreated = newPerson.DateCreated;
+            existingPerson.DateLastModified = newPerson.DateLastModified;
+            existingPerson.LastModifiedUsername = newPerson.LastModifiedUsername;
+
+            _lendingLibraryDbContext.SaveChanges();
         }
     }
 }
