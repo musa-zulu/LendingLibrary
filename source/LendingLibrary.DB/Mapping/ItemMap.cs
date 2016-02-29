@@ -13,6 +13,7 @@ namespace LendingLibrary.DB.Mapping
             ToTable(ItemTable.TableName);
             Property(p => p.Id).HasColumnName(ItemTable.Columns.ItemId);
             Property(p => p.ItemName).HasColumnName(ItemTable.Columns.ItemName);
+            Property(p => p.Photo).HasColumnName(ItemTable.Columns.Photo);
         }
     }
 }

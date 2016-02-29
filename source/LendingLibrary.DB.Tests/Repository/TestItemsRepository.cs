@@ -214,6 +214,81 @@ namespace LendingLibrary.DB.Tests.Repository
             lendingLibraryDbContext.Received().SaveChanges();
         }
 
+        [Test]
+        public void Update_GivenInvalidExistingItem_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => itemsRepository.Update(null, new Item()));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("existingItem", ex.ParamName);
+        }
+
+        [Test]
+        public void Update_GivenInvalidNewItem_ShouldShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => itemsRepository.Update(new Item(), null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("newItem", ex.ParamName);
+        }
+
+        [Test]
+        public void Update_GivenValidExistingAndNewItems_ShouldUpdateExistingItem()
+        {
+            //---------------Set up test pack-------------------
+            var existingItem = new ItemBuilder().WithRandomProps().Build();
+            var newItem = new ItemBuilder().WithRandomProps().Build();
+
+            var dbSet = new FakeDbSet<Item> { existingItem};
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
+
+            //---------------Assert Precondition----------------
+            Assert.AreNotEqual(existingItem.Id, newItem.Id);
+            Assert.AreNotEqual(existingItem.ItemName, newItem.ItemName);
+            Assert.AreNotEqual(existingItem.CreatedUsername, newItem.CreatedUsername);
+            Assert.AreNotEqual(existingItem.DateCreated, newItem.DateCreated);
+            Assert.AreNotEqual(existingItem.DateLastModified, newItem.DateLastModified);
+            Assert.AreNotEqual(existingItem.LastModifiedUsername, newItem.LastModifiedUsername);
+            Assert.AreNotEqual(existingItem.Photo, newItem.Photo);
+            //---------------Execute Test ----------------------
+            itemsRepository.Update(existingItem, newItem);
+            //---------------Test Result -----------------------
+            Assert.AreEqual(existingItem.ItemName, newItem.ItemName);
+            Assert.AreEqual(existingItem.CreatedUsername, newItem.CreatedUsername);
+            Assert.AreEqual(existingItem.DateCreated, newItem.DateCreated);
+            Assert.AreEqual(existingItem.DateLastModified, newItem.DateLastModified);
+            Assert.AreEqual(existingItem.LastModifiedUsername, newItem.LastModifiedUsername);
+            Assert.AreEqual(existingItem.Photo, newItem.Photo);
+        }
+
+        [Test]
+        public void Update_GivenExistingItemHasBeenUpdatedWithNewValues_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var existingItem = new ItemBuilder().WithRandomProps().Build();
+            var newItem = new ItemBuilder().WithRandomProps().Build();
+
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            itemsRepository.Update(existingItem, newItem);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
+        }
+
         private static ItemsRepository CreateItemsRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
             return new ItemsRepository(lendingLibraryDbContext);

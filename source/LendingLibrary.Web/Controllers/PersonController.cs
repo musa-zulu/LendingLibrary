@@ -47,7 +47,6 @@ namespace LendingLibrary.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Person/Edit/5
         public ActionResult Edit(Guid? id)
         {
             if (id == Guid.Empty)
@@ -63,56 +62,46 @@ namespace LendingLibrary.Web.Controllers
             return View(personViewModel);
         }
 
-        /*[HttpPost]
-       public ActionResult Edit(PersonVm person)
-       {
-           if (ModelState.IsValid)
-           {
-               db.Entry(person).State = EntityState.Modified;
-               db.SaveChanges();
-               return RedirectToAction("Index");
-           }
-           return View(movie);
-       }*/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(PersonViewModel personViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingPerson = _personRepository.GetById(personViewModel.Id);
+                var newPerson = _mappingEngine.Map<PersonViewModel, Person>(personViewModel);
+                _personRepository.Update(existingPerson, newPerson);
 
-        /*     [HttpPost]
-           [ValidateAntiForgeryToken]
-           public ActionResult Edit(Person personViewModel)
-           {
-               /*  if (ModelState.IsValid)
-                 {
-                     db.Entry(person).State = EntityState.Modified;
-                     db.SaveChanges();
-                     return RedirectToAction("Index");
-                 }#1#
-               return View(personViewModel);
-           }
+                return RedirectToAction("Index");
+            }
+            return View(personViewModel);
+        }
+        
+        public ActionResult Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var person = _personRepository.GetById(id);
+            var personViewModel = _mappingEngine.Map<Person,PersonViewModel>(person);
+            if (personViewModel == null)
+            {
+                return HttpNotFound();
+            }
+                return View(personViewModel);
+        }
 
-           // GET: Person/Delete/5
-           public ActionResult Delete(Guid? id)
-           {
-               if (id == null)
-               {
-                   return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-               }
-             //  Person person = db.People.Find(id);
-             //  if (person == null)
-               {
-                   return HttpNotFound();
-               }
-               return View(personViewModel);
-           }
-
-           // POST: Person/Delete/5
-           [HttpPost, ActionName("Delete")]
-           [ValidateAntiForgeryToken]
-           public ActionResult DeleteConfirmed(Guid id)
-           {
-             //  Person person = db.People.Find(id);
-           //    db.People.Remove(person);
-           //    db.SaveChanges();
-               return RedirectToAction("Index");
-           }S*/
+        /*   // POST: Person/Delete/5
+          [HttpPost, ActionName("Delete")]
+          [ValidateAntiForgeryToken]
+          public ActionResult DeleteConfirmed(Guid id)
+          {
+            //  Person person = db.People.Find(id);
+          //    db.People.Remove(person);
+          //    db.SaveChanges();
+              return RedirectToAction("Index");
+          }S*/
 
 
 

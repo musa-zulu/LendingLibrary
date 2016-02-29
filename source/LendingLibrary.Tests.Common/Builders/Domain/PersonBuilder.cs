@@ -20,12 +20,7 @@ namespace LendingLibrary.Tests.Common.Builders.Domain
         {
             return WithProp(p => p.PhoneNumber = phoneNumber);
         }
-
-        public PersonBuilder WithPhoto(byte[] photo)
-        {
-            return WithProp(p => p.Photo = photo);
-        }
-
+        
         public PersonBuilder WithId(Guid id)
         {
             return WithProp(p => p.Id = id);

@@ -13,6 +13,8 @@ namespace LendingLibrary.DB.Mapping
             Property(p => p.Id).HasColumnName(PersonTable.Columns.PersonId);
             Property(p => p.FirstName).HasColumnName(PersonTable.Columns.FirstName);
             Property(p => p.LastName).HasColumnName(PersonTable.Columns.LastName);
+            Property(p => p.Email).HasColumnName(PersonTable.Columns.Email);
+            Property(p => p.PhoneNumber).HasColumnName(PersonTable.Columns.PhoneNumber);
         }
     }
 }

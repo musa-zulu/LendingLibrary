@@ -15,11 +15,11 @@ namespace LendingLibrary.DB
     {
         static LendingLibraryDbContext()
         {
-            Database.SetInitializer<LendingLibraryDbContext>(null); 
+            Database.SetInitializer<LendingLibraryDbContext>(null);
         }
 
         public LendingLibraryDbContext(string nameOrConnectionString = null)
-            :base(nameOrConnectionString ?? "Name=LendingLibraryWebContext")
+            : base(nameOrConnectionString ?? "Name=LendingLibraryWebContext")
         {
             // Data Source=MUSA;Initial Catalog=LendingLibrary;User ID=sa
         }
@@ -29,6 +29,7 @@ namespace LendingLibrary.DB
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+
             var config = modelBuilder.Configurations;
             config.Add(new ItemMap());
             config.Add(new PersonMap());

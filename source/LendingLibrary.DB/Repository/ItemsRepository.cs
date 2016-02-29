@@ -40,5 +40,20 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext.Items.Remove(item);
             _lendingLibraryDbContext.SaveChanges();
         }
+
+        public void Update(Item existingItem, Item newItem)
+        {
+            if (existingItem == null) throw new ArgumentNullException(nameof(existingItem));
+            if (newItem == null) throw new ArgumentNullException(nameof(newItem));
+
+            existingItem.ItemName = newItem.ItemName;
+            existingItem.CreatedUsername = newItem.CreatedUsername;
+            existingItem.DateCreated = newItem.DateCreated;
+            existingItem.DateLastModified = newItem.DateLastModified;
+            existingItem.LastModifiedUsername = newItem.LastModifiedUsername;
+            existingItem.Photo = newItem.Photo;
+
+            _lendingLibraryDbContext.SaveChanges();
+        }
     }
 }

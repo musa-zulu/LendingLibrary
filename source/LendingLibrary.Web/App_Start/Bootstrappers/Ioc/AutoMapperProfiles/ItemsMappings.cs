@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Web.ViewModels;
 
@@ -9,11 +8,11 @@ namespace LendingLibrary.Web.Bootstrappers.Ioc.AutoMapperProfiles
     {
         protected override void Configure()
         {
-            CreateMap<List<Item>, List<ItemViewModel>>();
-            CreateMap<List<ItemViewModel>, List<Item>>();
-
-            CreateMap<Item, ItemViewModel>();
+            CreateMap<Item, ItemViewModel>()
+                .ForMember(dest => dest.DaysLentOut, opt => opt.Ignore())
+                .ForMember(dest => dest.PersonName, opt => opt.Ignore());
             CreateMap<ItemViewModel, Item>();
+          
         }
     }
 }

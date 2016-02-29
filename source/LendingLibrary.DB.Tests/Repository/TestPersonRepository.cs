@@ -250,7 +250,6 @@ namespace LendingLibrary.DB.Tests.Repository
                 .WithFirstName(RandomValueGen.GetRandomString())
                 .WithLastName(RandomValueGen.GetRandomString())
                 .WithPhoneNumber(RandomValueGen.GetRandomInt())
-                .WithPhoto(RandomValueGen.GetRandomBytes())
                 .WithRandomProps()
                 .Build();
             var newPerson = new PersonBuilder().WithRandomProps().Build();
@@ -264,7 +263,6 @@ namespace LendingLibrary.DB.Tests.Repository
             Assert.AreNotEqual(existingPerson.Email, newPerson.Email);
             Assert.AreNotEqual(existingPerson.FirstName, newPerson.FirstName);
             Assert.AreNotEqual(existingPerson.LastName, newPerson.LastName);
-            Assert.AreNotEqual(existingPerson.Photo, newPerson.Photo);
             Assert.AreNotEqual(existingPerson.CreatedUsername, newPerson.CreatedUsername);
             Assert.AreNotEqual(existingPerson.DateCreated, newPerson.DateCreated);
             Assert.AreNotEqual(existingPerson.DateLastModified, newPerson.DateLastModified);
@@ -272,11 +270,9 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Execute Test ----------------------
             personRepository.Update(existingPerson, newPerson);
             //---------------Test Result -----------------------
-            Assert.AreEqual(existingPerson.Id, newPerson.Id);
             Assert.AreEqual(existingPerson.FirstName, newPerson.FirstName);
             Assert.AreEqual(existingPerson.LastName, newPerson.LastName);
             Assert.AreEqual(existingPerson.PhoneNumber, newPerson.PhoneNumber);
-            Assert.AreEqual(existingPerson.Photo, newPerson.Photo);
             Assert.AreEqual(existingPerson.CreatedUsername, newPerson.CreatedUsername);
             Assert.AreEqual(existingPerson.DateCreated, newPerson.DateCreated);
             Assert.AreEqual(existingPerson.DateLastModified, newPerson.DateLastModified);

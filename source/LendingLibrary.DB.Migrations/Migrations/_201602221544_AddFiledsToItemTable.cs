@@ -12,7 +12,7 @@ namespace LendingLibrary.DB.Migrations.Migrations
                 .AddColumn(_Common.Columns.DateCreated).AsDate().Nullable()
                 .AddColumn(_Common.Columns.CreatedUsername).AsString(300).Nullable()
                 .AddColumn(_Common.Columns.DateLastModified).AsDate().Nullable()
-                .AddColumn(_Common.Columns.LastModifiedUsername).AsString();
+                .AddColumn(_Common.Columns.LastModifiedUsername).AsString().Nullable();
         }
 
         public override void Down()

@@ -325,7 +325,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = personController.Edit(null) as HttpStatusCodeResult;
+            var result = personController.Edit((Guid?) null) as HttpStatusCodeResult;
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
@@ -373,6 +373,228 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<PersonViewModel>(person);
+        }
+
+        [Test]
+        public void Edit_POST_ShouldHaveHttpPostAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(PersonController).GetMethod("Edit", new[] { typeof(PersonViewModel) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var httpPostAttribute = methodInfo.GetCustomAttribute<HttpPostAttribute>();
+            //---------------Test Result -----------------------
+            Assert.NotNull(httpPostAttribute);
+        }
+
+        [Test]
+        public void Edit_POST_ShouldHaveValidateAntiForgeryTokenAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(PersonController).GetMethod("Edit", new[] { typeof(PersonViewModel) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var httpPostAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
+            //---------------Test Result -----------------------
+            Assert.NotNull(httpPostAttribute);
+        }
+
+        [Test]
+        public void Edit_POST_ShouldReturnViewWithPersonViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var personViewModel = new PersonViewModel();
+            var personController = CreatePersonController().Build();
+            personController.ModelState.AddModelError("key", "some error");
+            //---------------Assert Precondition----------------
+            Assert.IsFalse(personController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(personViewModel);
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallGetByIdFromOrderRepo()
+        {
+            //---------------Set up test pack-------------------
+            var personViewModel = new PersonViewModelBuilder().WithRandomProps().Build();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .Build();
+
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(personController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(personViewModel);
+            //---------------Test Result -----------------------
+            personRepository.Received().GetById(personViewModel.Id);
+        }
+
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var person = new PersonBuilder().WithRandomProps().Build();
+            var personViewModel = new PersonViewModelBuilder().WithRandomProps().Build();
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(person.Id).Returns(person);
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
+
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(personController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(personViewModel);
+            //---------------Test Result -----------------------
+            mappingEngine.Received().Map<PersonViewModel, Person>(personViewModel);
+        }
+        
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallUpdateFromOrderRepo()
+        {
+            //---------------Set up test pack-------------------
+            var existingPerson = PersonBuilder.BuildRandom();
+            var personViewModel = new PersonViewModelBuilder().WithRandomProps().Build();
+
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(personViewModel.Id).Returns(existingPerson);
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
+
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(personController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(personViewModel);
+            //---------------Test Result -----------------------
+           personRepository.Received().Update(existingPerson, Arg.Any<Person>());
+        }
+
+        [Test]
+        public void Edit_GivenModelStateIsValid_ShouldRedirectToIndex()
+        {
+            //---------------Set up test pack-------------------
+            var existingPerson = PersonBuilder.BuildRandom();
+            var personViewModel = new PersonViewModelBuilder().WithRandomProps().Build();
+
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(personViewModel.Id).Returns(existingPerson);
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
+
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(personController.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = personController.Edit(personViewModel) as RedirectToRouteResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Index", result.RouteValues["Action"]);
+        }
+
+        [Test]
+        public void Delete_GivenInvalidId_ShouldReturnHttpStatusCodeBadRequest()
+        {
+            //---------------Set up test pack-------------------
+            var personController = CreatePersonController().Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Delete((Guid?)null) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
+        public void Delete_GivenValidId_ShouldCallGetByIdFromOrderId()
+        {
+            //---------------Set up test pack-------------------
+            var personId = Guid.NewGuid();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .Build();
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Delete(personId) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            personRepository.Received().GetById(personId);
+        }
+
+        [Test]
+        public void Delete_GivenValidPerson_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var person = PersonBuilder.BuildRandom();
+            var personId = person.Id;
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(personId).Returns(person);
+            var personController = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
+
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Delete(personId) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            mappingEngine.Received().Map<Person, PersonViewModel>(person);
+        }
+
+        [Test]
+        public void Delete_GivenPersonViewModelIsNull_ShouldReturnHttpNotFoundStatus()
+        {
+            //---------------Set up test pack-------------------
+            var personId = Guid.NewGuid();
+            var personController = CreatePersonController().Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Delete(personId) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Test]
+        public void Delete_ShouldReturnViewWithPersonViewModel()
+        {
+            //---------------Set up test pack-------------------.
+            var person = PersonBuilder.BuildRandom();
+            var personId = person.Id;
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(personId).Returns(person);
+            var personController = CreatePersonController()
+                .WithMappingEngine(mappingEngine)
+                .WithPersonRepository(personRepository)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = personController.Delete(personId) as ViewResult;
+            //---------------Test Result -----------------------
+             Assert.IsNotNull(result);
+            var model = result.Model;
+            Assert.IsInstanceOf<PersonViewModel>(model);
         }
 
         private static PersonControllerBuilder CreatePersonController()

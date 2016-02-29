@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Web.Mvc;
 using AutoMapper;
 using LendingLibrary.Core.Domain;
@@ -54,15 +55,15 @@ namespace LendingLibrary.Web.Controllers
             return View(itemViewModel);
         }
 
-       /* [HttpPost]
-        public ActionResult Edit(ItemViewModel itemViewModel)
-        {
-            if (!ModelState.IsValid) return View(itemViewModel);
-            var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
-            _itemsRepository.Entry(itemViewModel).State = EntityState.Modified;
-            _itemsRepository.Save(item); 
-            return RedirectToAction("Index", "Items");
-        }*/
+        /* [HttpPost]
+         public ActionResult Edit(ItemViewModel itemViewModel)
+         {
+             if (!ModelState.IsValid) return View(itemViewModel);
+             var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
+             _itemsRepository.Entry(itemViewModel).State = EntityState.Modified;
+             _itemsRepository.Save(item); 
+             return RedirectToAction("Index", "Items");
+         }*/
 
         public ActionResult Delete(Guid id)
         {

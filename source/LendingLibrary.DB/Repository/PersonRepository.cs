@@ -31,7 +31,7 @@ namespace LendingLibrary.DB.Repository
         public Person GetById(Guid? id)
         {
             if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
-            return _lendingLibraryDbContext.People.FirstOrDefault(p => p.Id == id);
+            return (from person in _lendingLibraryDbContext.People where person.Id == id select person).FirstOrDefault();
         }
 
         public void DeletePerson(Person person)
@@ -46,11 +46,9 @@ namespace LendingLibrary.DB.Repository
             if (existingPerson == null) throw new ArgumentNullException(nameof(existingPerson));
             if (newPerson == null) throw new ArgumentNullException(nameof(newPerson));
 
-            existingPerson.Id = newPerson.Id;
             existingPerson.FirstName = newPerson.FirstName;
             existingPerson.LastName = newPerson.LastName;
             existingPerson.PhoneNumber = newPerson.PhoneNumber;
-            existingPerson.Photo = newPerson.Photo;
             existingPerson.CreatedUsername = newPerson.CreatedUsername;
             existingPerson.DateCreated = newPerson.DateCreated;
             existingPerson.DateLastModified = newPerson.DateLastModified;
