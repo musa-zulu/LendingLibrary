@@ -8,7 +8,7 @@ namespace LendingLibrary.Core.Interfaces.Repositories
     {
         List<Item> GetAllItems();
         void Save(Item item);
-        Item GetById(Guid id);
+        Item GetById(Guid? id);
         void DeleteItem(Item item);
         void Update(Item existingItem, Item newItem);
     }

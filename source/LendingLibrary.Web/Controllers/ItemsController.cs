@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
 using LendingLibrary.Core.Domain;
@@ -48,24 +49,56 @@ namespace LendingLibrary.Web.Controllers
             return View(itemViewModel);
         }
 
-        public ActionResult Edit(Guid id)
+        public ActionResult Edit(Guid? id)
         {
+            if (id == Guid.Empty)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             var item = _itemsRepository.GetById(id);
             var itemViewModel = _mappingEngine.Map<Item, ItemViewModel>(item);
+            if (itemViewModel == null)
+            {
+                return HttpNotFound();
+            }
             return View(itemViewModel);
         }
 
-        /* [HttpPost]
-         public ActionResult Edit(ItemViewModel itemViewModel)
-         {
-             if (!ModelState.IsValid) return View(itemViewModel);
-             var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
-             _itemsRepository.Entry(itemViewModel).State = EntityState.Modified;
-             _itemsRepository.Save(item); 
-             return RedirectToAction("Index", "Items");
-         }*/
+ 
 
-        public ActionResult Delete(Guid id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(ItemViewModel itemViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingItem = _itemsRepository.GetById(itemViewModel.Id);
+                var newItem = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
+                _itemsRepository.Update(existingItem, newItem);
+
+                return RedirectToAction("Index");
+            }
+            return View(itemViewModel);
+        }
+
+        /*      public ActionResult Delete(Guid? id)
+       {
+           if (id == null)
+           {
+               return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+           }
+           var person = _personRepository.GetById(id);
+           var personViewModel = _mappingEngine.Map<Person, PersonViewModel>(person);
+           if (personViewModel == null)
+           {
+               return HttpNotFound();
+           }
+           return View(personViewModel);
+       }*/
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(Guid id)
         {
             if (id != Guid.Empty)
             {

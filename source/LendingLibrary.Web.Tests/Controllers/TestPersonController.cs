@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Net;
 using System.Reflection;
 using System.Web.Mvc;
@@ -325,7 +326,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = personController.Edit((Guid?) null) as HttpStatusCodeResult;
+            var result = personController.Edit((Guid?)null) as HttpStatusCodeResult;
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
@@ -352,7 +353,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             mappingEngine.Received().Map<Person, PersonViewModel>(person);
         }
-        
+
         [Test]
         public void Edit_ShouldReturnViewWithPersonViewModel()
         {
@@ -396,9 +397,9 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
             Assert.IsNotNull(methodInfo);
             //---------------Execute Test ----------------------
-            var httpPostAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
+            var antiForgeryAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
             //---------------Test Result -----------------------
-            Assert.NotNull(httpPostAttribute);
+            Assert.NotNull(antiForgeryAttribute);
         }
 
         [Test]
@@ -455,7 +456,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             mappingEngine.Received().Map<PersonViewModel, Person>(personViewModel);
         }
-        
+
         [Test]
         public void Edit_POST_GivenModelStateIsValid_ShouldCallUpdateFromOrderRepo()
         {
@@ -477,11 +478,11 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Execute Test ----------------------
             var result = personController.Edit(personViewModel);
             //---------------Test Result -----------------------
-           personRepository.Received().Update(existingPerson, Arg.Any<Person>());
+            personRepository.Received().Update(existingPerson, Arg.Any<Person>());
         }
 
         [Test]
-        public void Edit_GivenModelStateIsValid_ShouldRedirectToIndex()
+        public void Edit_POST_GivenModelStateIsValid_ShouldRedirectToIndex()
         {
             //---------------Set up test pack-------------------
             var existingPerson = PersonBuilder.BuildRandom();
@@ -592,9 +593,70 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Execute Test ----------------------
             var result = personController.Delete(personId) as ViewResult;
             //---------------Test Result -----------------------
-             Assert.IsNotNull(result);
+            Assert.IsNotNull(result);
             var model = result.Model;
             Assert.IsInstanceOf<PersonViewModel>(model);
+        }
+
+        [Test]
+        public void DeleteConfirmed_ShouldHaveHttpPostAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(PersonController).GetMethod("DeleteConfirmed", new[] { typeof(Guid) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var httpPostAttribute = methodInfo.GetCustomAttribute<HttpPostAttribute>();
+            //---------------Test Result -----------------------
+            Assert.NotNull(httpPostAttribute);
+        }
+
+        [Test]
+        public void DeleteConfirmed_ShoulHaveActionNameAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(PersonController).GetMethod("DeleteConfirmed", new[] { typeof(Guid) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var actionNameAttribute = methodInfo.GetCustomAttribute<ActionNameAttribute>();
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(actionNameAttribute);
+        }
+
+        [Test]
+        public void DeleteConfirmed_GivenValidId_ShouldCallGetById()
+        {
+            //---------------Set up test pack-------------------
+            var id = Guid.NewGuid();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var controller = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.DeleteConfirmed(id);
+            //---------------Test Result -----------------------
+            personRepository.Received().GetById(id);
+        }
+        
+        [Test]
+        public void DeleteConfirmed_GivenPersonIsReturnedFromRepo_ShouldCallDeletePerson()
+        {
+            //---------------Set up test pack-------------------
+            var person = new PersonBuilder().WithRandomProps().Build();
+            var personRepository = Substitute.For<IPersonRepository>();
+            personRepository.GetById(person.Id).Returns(person);
+            var controller = CreatePersonController()
+                .WithPersonRepository(personRepository)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.DeleteConfirmed(person.Id);
+            //---------------Test Result -----------------------
+            personRepository.Received().DeletePerson(person);
         }
 
         private static PersonControllerBuilder CreatePersonController()

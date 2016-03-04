@@ -76,7 +76,7 @@ namespace LendingLibrary.Web.Controllers
             }
             return View(personViewModel);
         }
-        
+
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -84,26 +84,22 @@ namespace LendingLibrary.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var person = _personRepository.GetById(id);
-            var personViewModel = _mappingEngine.Map<Person,PersonViewModel>(person);
+            var personViewModel = _mappingEngine.Map<Person, PersonViewModel>(person);
             if (personViewModel == null)
             {
                 return HttpNotFound();
             }
-                return View(personViewModel);
+            return View(personViewModel);
         }
 
-        /*   // POST: Person/Delete/5
-          [HttpPost, ActionName("Delete")]
-          [ValidateAntiForgeryToken]
-          public ActionResult DeleteConfirmed(Guid id)
-          {
-            //  Person person = db.People.Find(id);
-          //    db.People.Remove(person);
-          //    db.SaveChanges();
-              return RedirectToAction("Index");
-          }S*/
-
-
-
+        // POST: Person/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(Guid id)
+        {
+            var person = _personRepository.GetById(id);
+            _personRepository.DeletePerson(person);
+            return RedirectToAction("Index");
+        }
     }
 }
