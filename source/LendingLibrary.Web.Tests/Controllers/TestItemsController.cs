@@ -261,7 +261,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
         }
-        
+
         [Test]
         public void Edit_GivenItemId_ShouldCallGetByIdFromTheItemsRepo()
         {
@@ -321,7 +321,6 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
         }
 
-
         [Test]
         public void Edit_ShouldReturnViewWithItemViewModel()
         {
@@ -346,7 +345,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsNotNull(model);
             Assert.IsInstanceOf<ItemViewModel>(model);
         }
-       
+
         [Test]
         public void Edit_POST_ShouldHaveHttpPostAttribute()
         {
@@ -408,7 +407,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             mappingEngine.Received().Map<ItemViewModel, Item>(itemViewModel);
         }
-        
+
         [Test]
         public void Edit_POST_GivenModelStateIsValid_ShouldCallUpdateFromItemsRepo()
         {
@@ -430,25 +429,23 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             itemsRepository.Received().Update(Arg.Any<Item>(), Arg.Any<Item>());
         }
-        [Ignore]
+
         [Test]
         public void Edit_POST_GivenModelStateIsValid_ShouldRedirectToItemsIndexPage()
         {
             //---------------Set up test pack-------------------
             var itemViewModel = ItemsViewModelBuilder.BuildRandom();
-
             var itemsController = CreateItemsControllerBuilder()
                                 .Build();
             //---------------Assert Precondition----------------
             Assert.IsTrue(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
-            var result = itemsController.Edit(itemViewModel.Id) as RedirectToRouteResult;
+            var result = itemsController.Edit(itemViewModel) as RedirectToRouteResult;
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.RouteValues["Action"]);
-            Assert.AreEqual("Items", result.RouteValues["Controller"]);
         }
-        [Ignore]
+
         [Test]
         public void Edit_POST_GivenModelStateIsInvalid_ShouldReturnViewWithViewItemsViewModel()
         {
@@ -460,7 +457,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
             Assert.IsFalse(itemsController.ModelState.IsValid);
             //---------------Execute Test ----------------------
-            var result = itemsController.Edit(itemViewModel.Id) as ViewResult;
+            var result = itemsController.Edit(itemViewModel) as ViewResult;
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             var model = result.Model;
@@ -468,8 +465,8 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsInstanceOf<ItemViewModel>(model);
         }
 
-       /* [Test]
-        public void Delete_GivenItemIdIsEmpty_ShouldReturnView()
+        [Test]
+        public void Delete_GivenItemIdIsNull_ShouldReturnHttpStatusOfBadRequest()
         {
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
@@ -478,9 +475,10 @@ namespace LendingLibrary.Web.Tests.Controllers
                                         .Build();
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
-            var result = itemsControllerBuilder.Delete(Guid.Empty);
+            var result = itemsControllerBuilder.Delete((Guid?)null) as HttpStatusCodeResult;
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
+            Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         [Test]
@@ -499,16 +497,17 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             itemsRepository.Received(1).GetById(item.Id);
         }
-        
 
         [Test]
-        public void Delete_GivenAValidId_ShouldCallDeleteItem()
+        public void Delete_GivenAnItemIsReturnedFromRepo_ShouldcallMappingEngine()
         {
             //---------------Set up test pack-------------------
+            var mappingEngine = Substitute.For<IMappingEngine>();
             var itemsRepository = Substitute.For<IItemsRepository>();
             var item = ItemBuilder.BuildRandom();
             itemsRepository.GetById(item.Id).Returns(item);
             var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                        .WithMappingEngine(mappingEngine)
                                         .WithItemsRepository(itemsRepository)
                                         .Build();
             //---------------Assert Precondition----------------
@@ -516,9 +515,109 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Execute Test ----------------------
             itemsControllerBuilder.Delete(item.Id);
             //---------------Test Result -----------------------
-            itemsRepository.Received(1).DeleteItem(item);
-        }*/
-        
+            mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
+        }
+
+        [Test]
+        public void Delete_GivenItemsViewModelIsNull_ShouldReturnHttpNotFound()
+        {
+            //---------------Set up test pack-------------------
+            var itemsController = CreateItemsControllerBuilder().Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.Delete(Guid.NewGuid()) as HttpStatusCodeResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+        }
+
+        [Test]
+        public void Delete_ShouldReturnViewWithItemsViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var item = new ItemBuilder().WithRandomProps().Build();
+           var mappingEngine = _container.Resolve<IMappingEngine>();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            itemsRepository.GetById(item.Id).Returns(item);
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                .WithMappingEngine(mappingEngine)
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.Delete(item.Id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model;
+            Assert.IsInstanceOf<ItemViewModel>(model);
+        }
+
+        [Test]
+        public void DeleteConfirmed_ShouldHaveHttpPostAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(ItemsController).GetMethod("DeleteConfirmed", new[] { typeof(Guid) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var httpPostAttribute = methodInfo.GetCustomAttribute<HttpPostAttribute>();
+            //---------------Test Result -----------------------
+            Assert.NotNull(httpPostAttribute);
+        }
+
+        [Test]
+        public void DeleteConfirmed_ShoulHaveActionNameAttribute()
+        {
+            //---------------Set up test pack-------------------
+            var methodInfo = typeof(ItemsController).GetMethod("DeleteConfirmed", new[] { typeof(Guid) });
+            //---------------Assert Precondition----------------
+            Assert.IsNotNull(methodInfo);
+            //---------------Execute Test ----------------------
+            var actionNameAttribute = methodInfo.GetCustomAttribute<ActionNameAttribute>();
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(actionNameAttribute);
+        }
+
+        [Test]
+        public void DeleteConfirmed_GivenValidId_ShouldCallGetById()
+        {
+            //---------------Set up test pack-------------------
+            var id = Guid.NewGuid();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+                
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.DeleteConfirmed(id);
+            //---------------Test Result -----------------------
+            itemsRepository.Received().GetById(id);
+        }
+
+        [Test]
+        public void DeleteConfirmed_GivenItemIsReturnedFromRepo_ShouldCallDeleteItem()
+        {
+            //---------------Set up test pack-------------------
+            var item = new ItemBuilder().WithRandomProps().Build();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            itemsRepository.GetById(item.Id).Returns(item);
+            var itemsController = CreateItemsControllerBuilder()
+                .WithItemsRepository(itemsRepository)
+              
+                .Build();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = itemsController.DeleteConfirmed(item.Id);
+            //---------------Test Result -----------------------
+            itemsRepository.Received().DeleteItem(item);
+        }
+
+
         private static ItemsControllerBuilder CreateItemsControllerBuilder()
         {
             return new ItemsControllerBuilder();

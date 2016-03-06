@@ -64,8 +64,6 @@ namespace LendingLibrary.Web.Controllers
             return View(itemViewModel);
         }
 
- 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ItemViewModel itemViewModel)
@@ -81,21 +79,21 @@ namespace LendingLibrary.Web.Controllers
             return View(itemViewModel);
         }
 
-        /*      public ActionResult Delete(Guid? id)
-       {
-           if (id == null)
-           {
-               return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-           }
-           var person = _personRepository.GetById(id);
-           var personViewModel = _mappingEngine.Map<Person, PersonViewModel>(person);
-           if (personViewModel == null)
-           {
-               return HttpNotFound();
-           }
-           return View(personViewModel);
-       }*/
-
+        public ActionResult Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var item = _itemsRepository.GetById(id);
+            var itemViewModel = _mappingEngine.Map<Item, ItemViewModel>(item);
+            if (itemViewModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(itemViewModel);
+        }
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
