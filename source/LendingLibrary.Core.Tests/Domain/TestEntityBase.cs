@@ -19,8 +19,7 @@ namespace LendingLibrary.Core.Tests.Domain
             Assert.DoesNotThrow(() => new EntityBase());
             //---------------Test Result -----------------------
         }
-
-        [TestCase("Id", typeof(Guid))]
+        
         [TestCase("DateCreated", typeof(DateTime))]
         [TestCase("CreatedUsername", typeof(string))]
         [TestCase("DateLastModified", typeof(DateTime))]

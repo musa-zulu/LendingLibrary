@@ -152,7 +152,7 @@ namespace LendingLibrary.DB.Tests.Repository
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
             //---------------Assert Precondition----------------
             //---------------Execute Test ----------------------
-            var result = itemsRepository.GetById(item.Id);
+            var result = itemsRepository.GetById(item.ItemId);
             //---------------Test Result -----------------------
             Assert.AreEqual(item, result);
         }
@@ -254,7 +254,7 @@ namespace LendingLibrary.DB.Tests.Repository
             var itemsRepository = CreateItemsRepository(lendingLibraryDbContext);
 
             //---------------Assert Precondition----------------
-            Assert.AreNotEqual(existingItem.Id, newItem.Id);
+            Assert.AreNotEqual(existingItem.ItemId, newItem.ItemId);
             Assert.AreNotEqual(existingItem.ItemName, newItem.ItemName);
             Assert.AreNotEqual(existingItem.CreatedUsername, newItem.CreatedUsername);
             Assert.AreNotEqual(existingItem.DateCreated, newItem.DateCreated);

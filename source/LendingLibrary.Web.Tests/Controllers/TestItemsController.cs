@@ -268,7 +268,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var itemsRepository = Substitute.For<IItemsRepository>();
             var item = ItemBuilder.BuildRandom();
-            var id = item.Id;
+            var id = item.ItemId;
             itemsRepository.GetById(id).Returns(item);
 
             var itemsController = CreateItemsControllerBuilder()
@@ -289,7 +289,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var itemsRepository = Substitute.For<IItemsRepository>();
             var mappingEngine = Substitute.For<IMappingEngine>();
             var item = ItemBuilder.BuildRandom();
-            var id = item.Id;
+            var id = item.ItemId;
             itemsRepository.GetById(id).Returns(item);
 
             var itemsController = CreateItemsControllerBuilder()
@@ -328,7 +328,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var itemsRepository = Substitute.For<IItemsRepository>();
             var mappingEngine = _container.Resolve<IMappingEngine>();
             var item = new ItemBuilder().WithRandomProps().Build();
-            var id = item.Id;
+            var id = item.ItemId;
             itemsRepository.GetById(id).Returns(item);
 
             var itemsController = CreateItemsControllerBuilder()
@@ -415,7 +415,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var item = new ItemBuilder().WithRandomProps().Build();
             var itemViewModel = ItemsViewModelBuilder.BuildRandom();
             var itemsRepository = Substitute.For<IItemsRepository>();
-            itemsRepository.GetById(item.Id).Returns(item);
+            itemsRepository.GetById(item.ItemId).Returns(item);
             var mappingEngine = _container.Resolve<IMappingEngine>();
 
             var itemsController = CreateItemsControllerBuilder()
@@ -493,9 +493,9 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            itemsControllerBuilder.Delete(item.Id);
+            itemsControllerBuilder.Delete(item.ItemId);
             //---------------Test Result -----------------------
-            itemsRepository.Received(1).GetById(item.Id);
+            itemsRepository.Received(1).GetById(item.ItemId);
         }
 
         [Test]
@@ -505,7 +505,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var mappingEngine = Substitute.For<IMappingEngine>();
             var itemsRepository = Substitute.For<IItemsRepository>();
             var item = ItemBuilder.BuildRandom();
-            itemsRepository.GetById(item.Id).Returns(item);
+            itemsRepository.GetById(item.ItemId).Returns(item);
             var itemsControllerBuilder = CreateItemsControllerBuilder()
                                         .WithMappingEngine(mappingEngine)
                                         .WithItemsRepository(itemsRepository)
@@ -513,7 +513,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            itemsControllerBuilder.Delete(item.Id);
+            itemsControllerBuilder.Delete(item.ItemId);
             //---------------Test Result -----------------------
             mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
         }
@@ -539,7 +539,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var item = new ItemBuilder().WithRandomProps().Build();
            var mappingEngine = _container.Resolve<IMappingEngine>();
             var itemsRepository = Substitute.For<IItemsRepository>();
-            itemsRepository.GetById(item.Id).Returns(item);
+            itemsRepository.GetById(item.ItemId).Returns(item);
             var itemsController = CreateItemsControllerBuilder()
                 .WithItemsRepository(itemsRepository)
                 .WithMappingEngine(mappingEngine)
@@ -547,7 +547,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = itemsController.Delete(item.Id) as ViewResult;
+            var result = itemsController.Delete(item.ItemId) as ViewResult;
             //---------------Test Result -----------------------
             Assert.IsNotNull(result);
             var model = result.Model;
@@ -604,7 +604,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var item = new ItemBuilder().WithRandomProps().Build();
             var itemsRepository = Substitute.For<IItemsRepository>();
-            itemsRepository.GetById(item.Id).Returns(item);
+            itemsRepository.GetById(item.ItemId).Returns(item);
             var itemsController = CreateItemsControllerBuilder()
                 .WithItemsRepository(itemsRepository)
               
@@ -612,7 +612,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = itemsController.DeleteConfirmed(item.Id);
+            var result = itemsController.DeleteConfirmed(item.ItemId);
             //---------------Test Result -----------------------
             itemsRepository.Received().DeleteItem(item);
         }

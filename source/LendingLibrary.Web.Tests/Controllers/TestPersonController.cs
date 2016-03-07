@@ -339,7 +339,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var person = new PersonBuilder().WithRandomProps().Build();
             var mappingEngine = Substitute.For<IMappingEngine>();
             var personRepository = Substitute.For<IPersonRepository>();
-            personRepository.GetById(person.Id).Returns(person);
+            personRepository.GetById(person.PersonId).Returns(person);
 
             var personController = CreatePersonController()
                .WithPersonRepository(personRepository)
@@ -349,7 +349,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = personController.Edit(person.Id);
+            var result = personController.Edit(person.PersonId);
             //---------------Test Result -----------------------
             mappingEngine.Received().Map<Person, PersonViewModel>(person);
         }
@@ -442,7 +442,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             var person = new PersonBuilder().WithRandomProps().Build();
             var personViewModel = new PersonViewModelBuilder().WithRandomProps().Build();
             var personRepository = Substitute.For<IPersonRepository>();
-            personRepository.GetById(person.Id).Returns(person);
+            personRepository.GetById(person.PersonId).Returns(person);
             var mappingEngine = Substitute.For<IMappingEngine>();
             var personController = CreatePersonController()
                 .WithPersonRepository(personRepository)
@@ -543,7 +543,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------
             var person = PersonBuilder.BuildRandom();
-            var personId = person.Id;
+            var personId = person.PersonId;
             var mappingEngine = Substitute.For<IMappingEngine>();
             var personRepository = Substitute.For<IPersonRepository>();
             personRepository.GetById(personId).Returns(person);
@@ -580,7 +580,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         {
             //---------------Set up test pack-------------------.
             var person = PersonBuilder.BuildRandom();
-            var personId = person.Id;
+            var personId = person.PersonId;
             var mappingEngine = _container.Resolve<IMappingEngine>();
             var personRepository = Substitute.For<IPersonRepository>();
             personRepository.GetById(personId).Returns(person);
@@ -647,14 +647,14 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Set up test pack-------------------
             var person = new PersonBuilder().WithRandomProps().Build();
             var personRepository = Substitute.For<IPersonRepository>();
-            personRepository.GetById(person.Id).Returns(person);
+            personRepository.GetById(person.PersonId).Returns(person);
             var controller = CreatePersonController()
                 .WithPersonRepository(personRepository)
                 .Build();
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = controller.DeleteConfirmed(person.Id);
+            var result = controller.DeleteConfirmed(person.PersonId);
             //---------------Test Result -----------------------
             personRepository.Received().DeletePerson(person);
         }

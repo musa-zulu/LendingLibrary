@@ -21,9 +21,5 @@ namespace LendingLibrary.Tests.Common.Builders.Domain
             return WithProp(p => p.PhoneNumber = phoneNumber);
         }
         
-        public PersonBuilder WithId(Guid id)
-        {
-            return WithProp(p => p.Id = id);
-        }
     }
 }

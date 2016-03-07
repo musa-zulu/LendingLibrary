@@ -103,7 +103,7 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Test Result -----------------------
             var peopleFromRepo = personRepository.GetAllPeople();
             Assert.AreEqual(1, peopleFromRepo.Count);
-            Assert.AreEqual(person.Id, peopleFromRepo.First().Id);
+            Assert.AreEqual(person.PersonId, peopleFromRepo.First().PersonId);
             CollectionAssert.Contains(peopleFromRepo, person);
         }
 
@@ -148,7 +148,7 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = personRepository.GetById(person.Id);
+            var result = personRepository.GetById(person.PersonId);
             //---------------Test Result -----------------------
             Assert.AreEqual(person, result);
         }
@@ -259,7 +259,7 @@ namespace LendingLibrary.DB.Tests.Repository
             var personRepository = CreatePersonRepository(lendingLibraryDbContext);
 
             //---------------Assert Precondition----------------
-            Assert.AreNotEqual(existingPerson.Id, newPerson.Id);
+            Assert.AreNotEqual(existingPerson.PersonId, newPerson.PersonId);
             Assert.AreNotEqual(existingPerson.Email, newPerson.Email);
             Assert.AreNotEqual(existingPerson.FirstName, newPerson.FirstName);
             Assert.AreNotEqual(existingPerson.LastName, newPerson.LastName);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LendingLibrary.Core.Domain
 {
@@ -21,6 +22,7 @@ namespace LendingLibrary.Core.Domain
     }
     public class Person : EntityBase
     {
+        public Guid PersonId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

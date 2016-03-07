@@ -31,7 +31,7 @@ namespace LendingLibrary.DB.Repository
         public Person GetById(Guid? id)
         {
             if (id == Guid.Empty) throw new ArgumentNullException(nameof(id));
-            return (from person in _lendingLibraryDbContext.People where person.Id == id select person).FirstOrDefault();
+            return (from person in _lendingLibraryDbContext.People where person.PersonId == id select person).FirstOrDefault();
         }
 
         public void DeletePerson(Person person)
