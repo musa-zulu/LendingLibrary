@@ -6,5 +6,6 @@ namespace LendingLibrary.Core.Domain
     {
         public string ItemName { get; set; }
         public byte[] Photo { get; set; }
+        public virtual Person Person { get; set; }
     }
 }

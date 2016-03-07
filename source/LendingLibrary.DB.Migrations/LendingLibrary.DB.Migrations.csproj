@@ -62,6 +62,7 @@
     <Compile Include="Migrations\_201602221423_AddFieldsToPersonTable.cs" />
     <Compile Include="Migrations\_201602221544_AddFiledsToItemTable.cs" />
     <Compile Include="Migrations\_201602261517_AddFielsToPersonTable.cs" />
+    <Compile Include="Migrations\_201603071720_AlterTablePersonAddTileField.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

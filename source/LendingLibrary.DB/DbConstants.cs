@@ -12,6 +12,7 @@
                     public const string ItemId = "Id";
                     public const string ItemName = "ItemName";
                     public const string Photo = "Photo";
+                    public const string PersonId = "PersonId";
                 }
             }
 
@@ -25,6 +26,7 @@
                     public const string LastName = "LastName";
                     public const string Email = "Email";
                     public const string PhoneNumber = "PhoneNumber";
+                    public const string Title = "Title";
                 }
             }
 

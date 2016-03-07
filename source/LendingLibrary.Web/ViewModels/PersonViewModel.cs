@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using LendingLibrary.Core.Domain;
 
 namespace LendingLibrary.Web.ViewModels
 {
@@ -12,5 +14,7 @@ namespace LendingLibrary.Web.ViewModels
         [Display(Name = "Phone Number")]
         public long PhoneNumber { get; set; }
         public string Email { get; set; }
+        public Title Title { get; set; }
+        public virtual ICollection<Item> Items { get; set; }
     }
 }

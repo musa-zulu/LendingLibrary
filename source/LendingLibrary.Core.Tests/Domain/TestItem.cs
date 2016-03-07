@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using LendingLibrary.Core.Domain;
 using NUnit.Framework;
 using PeanutButter.TestUtils.Generic;

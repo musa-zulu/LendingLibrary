@@ -9,7 +9,8 @@ namespace LendingLibrary.DB.Migrations.Migrations
         {
             Create.Table(DbConstants.Tables.ItemTable.TableName)
                 .WithColumn(DbConstants.Tables.ItemTable.Columns.ItemId).AsGuid().PrimaryKey()
-                .WithColumn(DbConstants.Tables.ItemTable.Columns.ItemName).AsString(512).NotNullable();
+                .WithColumn(DbConstants.Tables.ItemTable.Columns.ItemName).AsString(512).NotNullable()
+                .WithColumn(DbConstants.Tables.PersonTable.Columns.PersonId).AsGuid().ForeignKey();
 
             Create.Table(DbConstants.Tables.PersonTable.TableName)
                 .WithColumn(DbConstants.Tables.PersonTable.Columns.PersonId).AsGuid().PrimaryKey()
