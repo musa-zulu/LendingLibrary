@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbConstants.cs" />
+    <Compile Include="Mapping\LendingMap.cs" />
     <Compile Include="Repository\PersonRepository.cs" />
     <Compile Include="LendingLibraryDbContext.cs" />
     <Compile Include="Mapping\ItemMap.cs" />

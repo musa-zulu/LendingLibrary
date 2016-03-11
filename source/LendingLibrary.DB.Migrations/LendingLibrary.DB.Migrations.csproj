@@ -65,6 +65,7 @@
     <Compile Include="Migrations\_201603071720_AlterTablePersonAddTileField.cs" />
     <Compile Include="Migrations\_201603111427_AlteTablesRemovePrimaryKeys.cs" />
     <Compile Include="Migrations\_201603111437_AddFieldsAsPrimaryKeysToTables.cs" />
+    <Compile Include="Migrations\_201603111543_AddLendingTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

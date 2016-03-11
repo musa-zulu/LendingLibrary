@@ -29,6 +29,20 @@
                 }
             }
 
+            public class LendingTable
+            {
+                public const string TableName = "Lending";
+                public class Columns
+                {
+                    public const string LedingId = "LedingId";
+                    public const string PersonId = "PersonId";
+                    public const string ItemId = "ItemId";
+                    public const string DateBorrowed = "DateBorrowed";
+                    public const string DateReturned = "DateReturned";
+                    public const string Status = "Status";
+                }
+            }
+
             public class Common
             {
                 public class Columns

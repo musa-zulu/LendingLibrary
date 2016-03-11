@@ -8,6 +8,7 @@ namespace LendingLibrary.DB
     {
         IDbSet<Item> Items { get; set; }
         IDbSet<Person> People { get; set; }
+        IDbSet<Lending> Lendings { get; set; }
         int SaveChanges();
     }
 
@@ -26,6 +27,7 @@ namespace LendingLibrary.DB
 
         public IDbSet<Item> Items { get; set; }
         public IDbSet<Person> People { get; set; }
+        public IDbSet<Lending> Lendings { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -33,6 +35,7 @@ namespace LendingLibrary.DB
             var config = modelBuilder.Configurations;
             config.Add(new ItemMap());
             config.Add(new PersonMap());
+            config.Add(new LendingMap());
         }
     }
 }

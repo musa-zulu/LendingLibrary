@@ -76,11 +76,6 @@ namespace LendingLibrary.Web.Controllers
             return View(itemViewModel);
         }
 
-        public ActionResult LendItem()
-        {
-            throw new NotImplementedException();
-        }
-
         public ActionResult Delete(Guid? id)
         {
             if (id == null)

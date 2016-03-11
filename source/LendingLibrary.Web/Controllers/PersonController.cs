@@ -40,7 +40,6 @@ namespace LendingLibrary.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(PersonViewModel personViewModel)
         {
-            personViewModel.Id = Guid.NewGuid();
             if (!ModelState.IsValid) return View(personViewModel);
             var person = _mappingEngine.Map<PersonViewModel, Person>(personViewModel);
             _personRepository.Save(person);

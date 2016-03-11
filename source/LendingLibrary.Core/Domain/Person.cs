@@ -28,5 +28,6 @@ namespace LendingLibrary.Core.Domain
         public string Email { get; set; }
         public long PhoneNumber { get; set; }
         public Title Title { get; set; }
+        public IEnumerable<Lending> Lendings { get; set; }
     }
 }
