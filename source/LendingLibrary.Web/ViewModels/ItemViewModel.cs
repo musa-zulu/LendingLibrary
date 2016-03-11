@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using LendingLibrary.Core.Domain;
 
 namespace LendingLibrary.Web.ViewModels
 {
@@ -12,6 +11,5 @@ namespace LendingLibrary.Web.ViewModels
         [DisplayName("Days Lent Out")]
         public int DaysLentOut { get; set; }
         public byte[] Photo { get; set; }
-        public Person Person { get; set; }
     }
 }

@@ -23,6 +23,7 @@ namespace LendingLibrary.DB.Repository
 
         public void Save(Person person)
         {
+            person.PersonId = Guid.NewGuid();
             if (person == null) throw new ArgumentNullException(nameof(person));
             _lendingLibraryDbContext.People.Add(person);
             _lendingLibraryDbContext.SaveChanges();

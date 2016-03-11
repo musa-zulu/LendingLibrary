@@ -12,7 +12,6 @@
                     public const string ItemId = "ItemId";
                     public const string ItemName = "ItemName";
                     public const string Photo = "Photo";
-                    public const string PersonId = "PersonId";
                 }
             }
 

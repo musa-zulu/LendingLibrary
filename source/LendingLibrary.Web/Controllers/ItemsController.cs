@@ -37,7 +37,6 @@ namespace LendingLibrary.Web.Controllers
         [HttpPost]
         public ActionResult Create(ItemViewModel itemViewModel)
         {
-            itemViewModel.Id = Guid.NewGuid();
             if (ModelState.IsValid)
             {
                 var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);

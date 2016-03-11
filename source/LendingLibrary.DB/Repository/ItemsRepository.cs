@@ -24,6 +24,7 @@ namespace LendingLibrary.DB.Repository
         public void Save(Item item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
+            item.ItemId = Guid.NewGuid();
             _lendingLibraryDbContext.Items.Add(item);
             _lendingLibraryDbContext.SaveChanges();
         }
