@@ -8,6 +8,7 @@ using LendingLibrary.Tests.Common.Builders.Domain;
 using LendingLibrary.Tests.Common.Helpers;
 using NSubstitute;
 using NUnit.Framework;
+using PeanutButter.RandomGenerators;
 
 namespace LendingLibrary.DB.Tests.Repository
 {
@@ -18,11 +19,11 @@ namespace LendingLibrary.DB.Tests.Repository
         public void Construct()
         {
             //---------------Set up test pack-------------------
-            
+
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            Assert.DoesNotThrow(()=>new LendingRepository(Substitute.For<ILendingLibraryDbContext>()));
+            Assert.DoesNotThrow(() => new LendingRepository(Substitute.For<ILendingLibraryDbContext>()));
             //---------------Test Result -----------------------
         }
 
@@ -30,11 +31,11 @@ namespace LendingLibrary.DB.Tests.Repository
         public void Construct_GivenILendingLibraryDbContextIsNull_ShouldThrowExcption()
         {
             //---------------Set up test pack-------------------
-            
+
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(()=> new LendingRepository(null));
+            var ex = Assert.Throws<ArgumentNullException>(() => new LendingRepository(null));
             //---------------Test Result -----------------------
             Assert.AreEqual("lendingLibraryDbContext", ex.ParamName);
         }
@@ -76,9 +77,9 @@ namespace LendingLibrary.DB.Tests.Repository
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(()=> controller.Save(null));
+            var ex = Assert.Throws<ArgumentNullException>(() => controller.Save(null));
             //---------------Test Result -----------------------
-           Assert.AreEqual("lending", ex.ParamName);
+            Assert.AreEqual("lending", ex.ParamName);
         }
 
         [Test]
@@ -89,7 +90,7 @@ namespace LendingLibrary.DB.Tests.Repository
             var lendingLibraryDbContext = CreateLendingLibraryDbContext();
             var controller = CreateLendingController(lendingLibraryDbContext);
             //---------------Assert Precondition----------------
-            
+
             //---------------Execute Test ----------------------
             controller.Save(lending);
             //---------------Test Result -----------------------
@@ -133,9 +134,118 @@ namespace LendingLibrary.DB.Tests.Repository
             lendingLibraryDbContext.Received().SaveChanges();
         }
 
+        [Test]
+        public void GetById_GivenInvalidId_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => controller.GetById(null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("lendingId", ex.ParamName);
+        }
+
+        [Test]
+        public void GetById_GivenBorrowedItemExist_ShouldReturnThatItem()
+        {
+            //---------------Set up test pack-------------------
+            var lending = LendingBuilder.BuildRandom();
+            var dbSet = CreateFakeDbSet(lending);
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var results = controller.GetById(lending.LedingId);
+            //---------------Test Result -----------------------
+            Assert.AreEqual(lending, results);
+        }
+
+        [Test]
+        public void DeleteLending_InvalidLendingObject_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => controller.DeleteLending(null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("lending", ex.ParamName);
+        }
+
+        [Test]
+        public void DeleteLending_ValidLendingObject_ShouldDeleteLendingObject()
+        {
+            //---------------Set up test pack-------------------
+            var lending = LendingBuilder.BuildRandom();
+            var dbSet = CreateFakeDbSet(lending);
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+            Assert.AreEqual(1, lendingLibraryDbContext.Lendings.Count());
+            //---------------Execute Test ----------------------
+            controller.DeleteLending(lending);
+            //---------------Test Result -----------------------
+            var borrowedItems = controller.GetAll();
+            Assert.AreEqual(0, borrowedItems.Count);
+        }
+
+        [Test]
+        public void Update_GivenInvalidExistingBorrowedItem_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => controller.Update(null, new Lending()));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("existingBorrowedItem", ex.ParamName);
+        }
+
+
+        [Test]
+        public void Update_GivenInvalidnewItem_ShouldThrowException()
+        {
+            //---------------Set up test pack-------------------
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext();
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<ArgumentNullException>(() => controller.Update(new Lending(), null));
+            //---------------Test Result -----------------------
+            Assert.AreEqual("newItem", ex.ParamName);
+        }
+
+        [Test]
+        public void Update_GivenValidObjects_ShouldCallSaveChanges()
+        {
+            //---------------Set up test pack-------------------
+            var existingLendingItem = new LendingBuilder().WithStatus(Status.Available).WithRandomGeneratedId().Build();
+            var newLendingItem = new LendingBuilder().WithStatus(Status.NotAvailable).WithRandomGeneratedId().Build();
+            var dbSet = CreateFakeDbSet(existingLendingItem);
+            var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
+            var controller = CreateLendingController(lendingLibraryDbContext);
+            //---------------Assert Precondition----------------
+            Assert.AreNotEqual(existingLendingItem.Status, newLendingItem.Status);
+            //---------------Execute Test ----------------------
+            controller.Update(existingLendingItem, existingLendingItem);
+            //---------------Test Result -----------------------
+            lendingLibraryDbContext.Received().SaveChanges();
+        }
+
+        //Todo: add more tests for update
+
         private static FakeDbSet<Lending> CreateFakeDbSet(Lending lending = null)
         {
-            return new FakeDbSet<Lending> {lending};
+            return new FakeDbSet<Lending> { lending };
         }
 
         private static LendingRepository CreateLendingController(ILendingLibraryDbContext lendingLibraryDbContext = null)

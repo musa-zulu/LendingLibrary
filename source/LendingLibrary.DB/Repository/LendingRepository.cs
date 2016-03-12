@@ -29,19 +29,30 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext.SaveChanges();
         }
 
-        public Item GetById(Guid? id)
+        public Lending GetById(Guid? lendingId)
         {
-            throw new NotImplementedException();
+            if (lendingId == null) throw new ArgumentNullException(nameof(lendingId));
+            return _lendingLibraryDbContext.Lendings.FirstOrDefault(x => x.LedingId == lendingId);
         }
 
         public void DeleteLending(Lending lending)
         {
-            throw new NotImplementedException();
+            if (lending == null) throw new ArgumentNullException(nameof(lending));
+            _lendingLibraryDbContext.Lendings.Remove(lending);
         }
 
-        public void Update(Lending existingLending, Lending newLending)
+        public void Update(Lending existingBorrowedItem, Lending newItem)
         {
-            throw new NotImplementedException();
+            if (existingBorrowedItem == null) throw new ArgumentNullException(nameof(existingBorrowedItem));
+            if (newItem == null) throw new ArgumentNullException(nameof(newItem));
+
+            existingBorrowedItem.ItemId = newItem.ItemId;
+            existingBorrowedItem.PersonId = newItem.PersonId;
+            existingBorrowedItem.DateBorrowed = newItem.DateBorrowed;
+            existingBorrowedItem.DateReturned = newItem.DateReturned;
+            existingBorrowedItem.Status = newItem.Status;
+      
+            _lendingLibraryDbContext.SaveChanges();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace LendingLibrary.Core.Interfaces.Repositories
     {
         List<Lending> GetAll();
         void Save(Lending lending);
-        Item GetById(Guid? id);
+        Lending GetById(Guid? lendingId);
         void DeleteLending(Lending lending);
         void Update(Lending existingLending, Lending newLending);
     }
