@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
 
@@ -7,21 +8,25 @@ namespace LendingLibrary.DB.Repository
 {
     public class LendingRepository : ILendingRepository
     {
-        private ILendingLibraryDbContext lendingLibraryDbContext;
+        private ILendingLibraryDbContext _lendingLibraryDbContext;
 
         public LendingRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
-            this.lendingLibraryDbContext = lendingLibraryDbContext;
+            if (lendingLibraryDbContext == null) throw new ArgumentNullException(nameof(lendingLibraryDbContext));
+            this._lendingLibraryDbContext = lendingLibraryDbContext;
         }
 
-        public List<Lending> GetAllILendings()
+        public List<Lending> GetAll()
         {
-            throw new NotImplementedException();
+            return _lendingLibraryDbContext.Lendings.ToList();
         }
 
         public void Save(Lending lending)
         {
-            throw new NotImplementedException();
+            if (lending == null) throw new ArgumentNullException(nameof(lending));
+            lending.LedingId = Guid.NewGuid();
+            _lendingLibraryDbContext.Lendings.Add(lending);
+            _lendingLibraryDbContext.SaveChanges();
         }
 
         public Item GetById(Guid? id)

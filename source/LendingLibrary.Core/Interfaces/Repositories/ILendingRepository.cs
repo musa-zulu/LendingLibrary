@@ -7,7 +7,7 @@ namespace LendingLibrary.Core.Interfaces.Repositories
 {
     public interface ILendingRepository
     {
-        List<Lending> GetAllILendings();
+        List<Lending> GetAll();
         void Save(Lending lending);
         Item GetById(Guid? id);
         void DeleteLending(Lending lending);

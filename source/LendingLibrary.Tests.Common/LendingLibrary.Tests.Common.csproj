@@ -113,6 +113,7 @@
     <Compile Include="Builders\Controllers\ItemsControllerBuilder.cs" />
     <Compile Include="Builders\Controllers\PersonControllerBuilder.cs" />
     <Compile Include="Builders\Domain\ItemBuilder.cs" />
+    <Compile Include="Builders\Domain\LendingBuilder.cs" />
     <Compile Include="Builders\Domain\PersonBuilder.cs" />
     <Compile Include="Builders\LendingLibraryDbContextBuilder.cs" />
     <Compile Include="Builders\ViewModels\ItemsViewModelBuilder.cs" />

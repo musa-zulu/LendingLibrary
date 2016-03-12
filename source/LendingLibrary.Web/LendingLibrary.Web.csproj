@@ -144,6 +144,7 @@
     <Compile Include="App_Start\WindsorControllerFactory.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
+    <Compile Include="Controllers\LendingController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\SecurityController.cs" />
     <Compile Include="Global.asax.cs">
@@ -151,7 +152,6 @@
     </Compile>
     <Compile Include="Models\LendingLibraryWebContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\ItemsRepository.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\LendingViewModel.cs" />
     <Compile Include="ViewModels\PersonViewModel.cs" />
