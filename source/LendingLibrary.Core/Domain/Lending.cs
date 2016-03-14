@@ -13,8 +13,8 @@ namespace LendingLibrary.Core.Domain
         public Guid LedingId { get; set; }
         public Guid PersonId { get; set; }
         public Guid ItemId { get; set; }
-        public DateTime DateBorrowed { get; set; }
-        public DateTime DateReturned { get; set; }
+        public DateTime? DateBorrowed { get; set; }
+        public DateTime? DateReturned { get; set; }
         public Status Status { get; set; }
     }
 }

@@ -117,6 +117,7 @@
     <Compile Include="Builders\Domain\PersonBuilder.cs" />
     <Compile Include="Builders\LendingLibraryDbContextBuilder.cs" />
     <Compile Include="Builders\ViewModels\ItemsViewModelBuilder.cs" />
+    <Compile Include="Builders\ViewModels\LendingViewModelBuilder.cs" />
     <Compile Include="Builders\ViewModels\PersonViewModelBuilder.cs" />
     <Compile Include="Helpers\FakeDbSet.cs" />
     <Compile Include="Helpers\WindsorTestHelpers.cs" />

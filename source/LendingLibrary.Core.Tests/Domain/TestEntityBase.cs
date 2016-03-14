@@ -20,9 +20,9 @@ namespace LendingLibrary.Core.Tests.Domain
             //---------------Test Result -----------------------
         }
         
-        [TestCase("DateCreated", typeof(DateTime))]
+        [TestCase("DateCreated", typeof(DateTime?))]
         [TestCase("CreatedUsername", typeof(string))]
-        [TestCase("DateLastModified", typeof(DateTime))]
+        [TestCase("DateLastModified", typeof(DateTime?))]
         [TestCase("LastModifiedUsername", typeof(string))]
         public void Type_ShouldHaveProperty(string propertyName, Type propertyType)
         {

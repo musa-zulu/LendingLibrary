@@ -66,6 +66,7 @@
     <Compile Include="Migrations\_201603111427_AlteTablesRemovePrimaryKeys.cs" />
     <Compile Include="Migrations\_201603111437_AddFieldsAsPrimaryKeysToTables.cs" />
     <Compile Include="Migrations\_201603111543_AddLendingTable.cs" />
+    <Compile Include="Migrations\_201603141701_CreateForeignKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

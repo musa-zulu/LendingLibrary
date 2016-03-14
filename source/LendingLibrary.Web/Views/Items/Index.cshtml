@@ -19,7 +19,7 @@
             @Html.DisplayNameFor(model => model.PersonName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DaysLentOut)
+            @Html.DisplayNameFor(model => model.Photo)
         </th>
         <th></th>
     </tr>
@@ -32,9 +32,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PersonName)
-            </td>
+            </td> 
             <td>
-                @Html.DisplayFor(modelItem => item.DaysLentOut )
+                @Html.DisplayFor(modelItem => item.Photo)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

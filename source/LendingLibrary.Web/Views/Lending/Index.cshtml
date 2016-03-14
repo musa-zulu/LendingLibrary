@@ -1,0 +1,64 @@
+﻿@model IEnumerable<LendingLibrary.Web.ViewModels.LendingViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>List of borrowed items</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Item.ItemName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Item.Photo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DaysLentOut)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Person.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Person.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Person.PhoneNumber)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.ItemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Photo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DaysLentOut)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Person.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Person.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Person.PhoneNumber)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>

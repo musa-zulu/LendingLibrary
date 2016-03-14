@@ -24,8 +24,10 @@ namespace LendingLibrary.Web.Controllers
 
         public ActionResult Index()
         {
+            var itemViewModels = new List<ItemViewModel>();
             var allItems = _itemsRepository.GetAllItems();
-            var itemViewModels = _mappingEngine.Map<List<Item>, List<ItemViewModel>>(allItems);
+            if (allItems != null)
+                itemViewModels = _mappingEngine.Map<List<Item>, List<ItemViewModel>>(allItems);
             return View(itemViewModels);
         }
 
@@ -90,7 +92,7 @@ namespace LendingLibrary.Web.Controllers
             }
             return View(itemViewModel);
         }
-        
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)

@@ -136,6 +136,7 @@
     <Compile Include="App_Start\TestWindsorControllerFactory.cs" />
     <Compile Include="Controllers\TestHomeController.cs" />
     <Compile Include="Controllers\TestItemsController.cs" />
+    <Compile Include="Controllers\TestLendingController.cs" />
     <Compile Include="Controllers\TestPersonController.cs" />
     <Compile Include="Controllers\TestSecurityController.cs" />
     <Compile Include="DummyTests.cs" />
@@ -167,7 +168,6 @@
     <Content Include="GenericBuilderTests-ExampleUsage.cs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
