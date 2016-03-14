@@ -43,29 +43,21 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryui")
-@*<script>
+    <script>
         $(function () {
             $(".jqueryui-marker-datepicker").datepicker({
                 dateFormat: "yy-mm-dd",
                 changeYear: true,
                 showOn: "button",
-                buttonImage: "/content/images/calendar-icon.png"
+                //buttonImage: "/Content/images/calendar-icon.png"
+                buttonImage: "/Content/images/calendar.ico"
             }).css("display", "inline-block")
                 .next("button".button({
                     icons: { primary: "ui-icon-calendar" },
                     label: "Select a date",
                     text: false
                 }));
-        });
-    </script>*@
-    <script>
-     $(function () {
-         $(".datePicker").datepicker({
-            buttonImage: "content/images/calendar-icon.png",
-            buttonImageOnly: true,
-            buttonText: "Select date"
-         });
-     });
+        });      
     </script>
     @RenderSection("scripts", required: false)
 </body>
