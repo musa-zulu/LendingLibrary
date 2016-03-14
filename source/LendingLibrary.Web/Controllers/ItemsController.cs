@@ -102,7 +102,7 @@ namespace LendingLibrary.Web.Controllers
                 var item = _itemsRepository.GetById(id);
                 _itemsRepository.DeleteItem(item);
             }
-            return View("Index");
+            return RedirectToAction("Index");
         }
     }
 }
