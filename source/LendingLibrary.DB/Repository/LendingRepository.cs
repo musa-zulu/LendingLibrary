@@ -25,6 +25,7 @@ namespace LendingLibrary.DB.Repository
         {
             if (lending == null) throw new ArgumentNullException(nameof(lending));
             lending.LedingId = Guid.NewGuid();
+            lending.LendingStatus = LendingStatus.NotAvailable;
             _lendingLibraryDbContext.Lendings.Add(lending);
             _lendingLibraryDbContext.SaveChanges();
         }
@@ -50,7 +51,7 @@ namespace LendingLibrary.DB.Repository
             existingBorrowedItem.PersonId = newItem.PersonId;
             existingBorrowedItem.DateBorrowed = newItem.DateBorrowed;
             existingBorrowedItem.DateReturned = newItem.DateReturned;
-            existingBorrowedItem.Status = newItem.Status;
+            existingBorrowedItem.LendingStatus = newItem.LendingStatus;
       
             _lendingLibraryDbContext.SaveChanges();
         }

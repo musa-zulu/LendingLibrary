@@ -13,7 +13,7 @@ namespace LendingLibrary.DB.Migrations.Migrations
              .WithColumn(Table.Columns.ItemId).AsGuid().NotNullable().ForeignKey()
              .WithColumn(Table.Columns.DateBorrowed).AsDateTime().Nullable()
              .WithColumn(Table.Columns.DateReturned).AsDateTime().Nullable()
-             .WithColumn(Table.Columns.Status).AsInt32();
+             .WithColumn(Table.Columns.LendingStatus).AsInt32();
         }
 
         public override void Down()

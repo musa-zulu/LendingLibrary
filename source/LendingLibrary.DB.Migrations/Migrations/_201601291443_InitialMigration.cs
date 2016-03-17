@@ -1,4 +1,5 @@
-﻿using FluentMigrator;
+﻿using System;
+using FluentMigrator;
 
 namespace LendingLibrary.DB.Migrations.Migrations
 {
@@ -10,7 +11,10 @@ namespace LendingLibrary.DB.Migrations.Migrations
             Create.Table(DbConstants.Tables.ItemTable.TableName)
                 .WithColumn(DbConstants.Tables.ItemTable.Columns.ItemId).AsGuid().PrimaryKey()
                 .WithColumn(DbConstants.Tables.ItemTable.Columns.ItemName).AsString(512).NotNullable()
-                .WithColumn(DbConstants.Tables.PersonTable.Columns.PersonId).AsGuid().NotNullable().ForeignKey();
+                .WithColumn(DbConstants.Tables.ItemTable.Columns.Photo).AsBinary(Int32.MaxValue).NotNullable()
+                .WithColumn(DbConstants.Tables.ItemTable.Columns.Mimetype).AsString(int.MaxValue).Nullable()
+                .WithColumn(DbConstants.Tables.ItemTable.Columns.ItemDescription).AsString(1000).Nullable();
+            // .WithColumn(DbConstants.Tables.PersonTable.Columns.PersonId).AsGuid().NotNullable().ForeignKey();
 
             Create.Table(DbConstants.Tables.PersonTable.TableName)
                 .WithColumn(DbConstants.Tables.PersonTable.Columns.PersonId).AsGuid().PrimaryKey()

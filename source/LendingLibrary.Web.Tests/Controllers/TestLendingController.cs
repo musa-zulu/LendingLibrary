@@ -45,7 +45,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            Assert.DoesNotThrow(() => new LendingController(Substitute.For<ILendingRepository>(), Substitute.For<IMappingEngine>()));
+            Assert.DoesNotThrow(() => new LendingController(Substitute.For<ILendingRepository>(), Substitute.For<IMappingEngine>(), Substitute.For<IPersonRepository>(), Substitute.For<IItemsRepository>()));
             //---------------Test Result -----------------------
         }
 
@@ -57,7 +57,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(null, Substitute.For<IMappingEngine>()));
+            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(null, Substitute.For<IMappingEngine>(), Substitute.For<IPersonRepository>(), Substitute.For<IItemsRepository>()));
             //---------------Test Result -----------------------
             Assert.AreEqual("lendingRepository", ex.ParamName);
         }
@@ -70,7 +70,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(Substitute.For<ILendingRepository>(), null));
+            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(Substitute.For<ILendingRepository>(), null,  Substitute.For<IPersonRepository>(), Substitute.For<IItemsRepository>()));
             //---------------Test Result -----------------------
             Assert.AreEqual("mappingEngine", ex.ParamName);
         }
@@ -601,7 +601,7 @@ namespace LendingLibrary.Web.Tests.Controllers
 
 
 
-        private static LendingController CreateLendingController(ILendingRepository lendingRepository = null, IMappingEngine mappingEngine = null)
+        private static LendingController CreateLendingController(ILendingRepository lendingRepository = null, IMappingEngine mappingEngine = null, IPersonRepository personRepository = null, IItemsRepository itemsRepository = null)
         {
             if (lendingRepository == null)
                 lendingRepository = Substitute.For<ILendingRepository>();
@@ -609,7 +609,10 @@ namespace LendingLibrary.Web.Tests.Controllers
             {
                 mappingEngine = Substitute.For<IMappingEngine>();
             }
-            return new LendingController(lendingRepository, mappingEngine);
+
+            if (personRepository == null) personRepository = Substitute.For<IPersonRepository>();
+            if (itemsRepository == null) itemsRepository = Substitute.For<IItemsRepository>();
+            return new LendingController(lendingRepository, mappingEngine, personRepository, itemsRepository);
         }
     }
 }

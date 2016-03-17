@@ -45,6 +45,7 @@
     <Compile Include="Domain\Item.cs" />
     <Compile Include="Domain\Lending.cs" />
     <Compile Include="Domain\Person.cs" />
+    <Compile Include="Domain\LendingStatus.cs" />
     <Compile Include="Interfaces\Repositories\IItemsRepository.cs" />
     <Compile Include="Interfaces\Repositories\ILendingRepository.cs" />
     <Compile Include="Interfaces\Repositories\IPersonRepository.cs" />

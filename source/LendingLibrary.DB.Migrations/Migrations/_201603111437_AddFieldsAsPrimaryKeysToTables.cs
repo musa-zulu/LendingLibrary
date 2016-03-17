@@ -8,7 +8,7 @@ namespace LendingLibrary.DB.Migrations.Migrations
     {
         public override void Up()
         {
-            Alter.Table(Table.PersonTable.TableName)
+          /*  Alter.Table(Table.PersonTable.TableName)
                 .AddColumn(Table.PersonTable.Columns.PersonId)
                 .AsGuid()
                 .NotNullable()
@@ -18,7 +18,7 @@ namespace LendingLibrary.DB.Migrations.Migrations
               .AddColumn(Table.ItemTable.Columns.ItemId)
               .AsGuid()
               .NotNullable()
-              .PrimaryKey();
+              .PrimaryKey();*/
 
         }
 

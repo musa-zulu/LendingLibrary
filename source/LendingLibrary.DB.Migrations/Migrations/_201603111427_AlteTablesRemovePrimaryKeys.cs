@@ -8,8 +8,8 @@ namespace LendingLibrary.DB.Migrations.Migrations
     {
         public override void Up()
         {
-            Delete.Column(Table.PersonTable.Columns.PersonId).FromTable(Table.PersonTable.TableName);
-            Delete.Column(Table.ItemTable.Columns.ItemId).FromTable(Table.ItemTable.TableName);
+           // Delete.Column(Table.PersonTable.Columns.PersonId).FromTable(Table.PersonTable.TableName);
+           // Delete.Column(Table.ItemTable.Columns.ItemId).FromTable(Table.ItemTable.TableName);
         }
 
         public override void Down()

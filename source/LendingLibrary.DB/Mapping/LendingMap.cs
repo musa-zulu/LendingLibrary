@@ -12,10 +12,10 @@ namespace LendingLibrary.DB.Mapping
 
             ToTable(LendingTable.TableName);
             Property(p => p.ItemId).HasColumnName(LendingTable.Columns.ItemId);
-            Property(p => p.ItemId).HasColumnName(LendingTable.Columns.PersonId);
-            Property(p => p.ItemId).HasColumnName(LendingTable.Columns.DateReturned);
-            Property(p => p.ItemId).HasColumnName(LendingTable.Columns.DateBorrowed);
-            Property(p => p.ItemId).HasColumnName(LendingTable.Columns.Status);
+            Property(p => p.PersonId).HasColumnName(LendingTable.Columns.PersonId);
+            Property(p => p.DateReturned).HasColumnName(LendingTable.Columns.DateReturned);
+            Property(p => p.DateBorrowed).HasColumnName(LendingTable.Columns.DateBorrowed);
+            Property(p => p.LendingStatus).HasColumnName(LendingTable.Columns.LendingStatus);
         }
     }
 }

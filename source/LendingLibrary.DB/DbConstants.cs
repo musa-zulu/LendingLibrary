@@ -12,6 +12,8 @@
                     public const string ItemId = "ItemId";
                     public const string ItemName = "ItemName";
                     public const string Photo = "Photo";
+                    public const string ItemDescription = "ItemDescription";
+                    public const string Mimetype = "Mimetype";
                 }
             }
 
@@ -39,7 +41,7 @@
                     public const string ItemId = "ItemId";
                     public const string DateBorrowed = "DateBorrowed";
                     public const string DateReturned = "DateReturned";
-                    public const string Status = "Status";
+                    public const string LendingStatus = "LendingStatus";
                 }
             }
 

@@ -11,9 +11,9 @@ namespace LendingLibrary.Tests.Common.Builders.Domain
             return WithProp(x => x.LedingId = id);
         }
 
-        public LendingBuilder WithStatus(Status status)
+        public LendingBuilder WithStatus(LendingStatus status)
         {
-            return WithProp(x => x.Status = status);
+            return WithProp(x => x.LendingStatus = status);
         }
 
         public LendingBuilder WithRandomGeneratedId()

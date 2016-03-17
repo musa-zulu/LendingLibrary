@@ -16,6 +16,5 @@ namespace LendingLibrary.Web.ViewModels
         public long PhoneNumber { get; set; }
         public string Email { get; set; }
         public Title Title { get; set; }
-        public virtual ICollection<Item> Items { get; set; }
     }
 }

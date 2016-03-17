@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
@@ -13,6 +14,9 @@ namespace LendingLibrary.Web.Controllers
     {
         private IMappingEngine _mappingEngine;
         private ILendingRepository _lendingRepository;
+        private IPersonRepository _personRepository;
+        private readonly IItemsRepository _itemsRepository;
+        private IMappingEngine mappingEngine;
 
         public LendingController(ILendingRepository lendingRepository)
         {
@@ -20,12 +24,14 @@ namespace LendingLibrary.Web.Controllers
             this._lendingRepository = lendingRepository;
         }
 
-        public LendingController(ILendingRepository lendingRepository, IMappingEngine mappingEngine) : this(lendingRepository)
+        public LendingController(ILendingRepository lendingRepository, IMappingEngine mappingEngine, IPersonRepository personRepository, IItemsRepository itemsRepository) : this(lendingRepository)
         {
             if (mappingEngine == null) throw new ArgumentNullException(nameof(mappingEngine));
             this._mappingEngine = mappingEngine;
+            _personRepository = personRepository;
+            _itemsRepository = itemsRepository;
         }
-
+        
         public ActionResult Index()
         {
             var viewModel = new List<LendingViewModel>();
@@ -34,12 +40,18 @@ namespace LendingLibrary.Web.Controllers
             {
                 viewModel = _mappingEngine.Map<List<Lending>, List<LendingViewModel>>(lendings);
             }
+            
             return View(viewModel);
         }
 
         public ActionResult Create()
         {
-            return View();
+            var lendingViewModel = new LendingViewModel();
+            var people = GetPersonSelectList(lendingViewModel);
+            var items = GetItemsSelectList(lendingViewModel);
+            lendingViewModel.PeopleSelectList = people;
+            lendingViewModel.ItemsSelectList = items;
+            return View(lendingViewModel);
         }
 
         [HttpPost]
@@ -64,6 +76,10 @@ namespace LendingLibrary.Web.Controllers
             {
                 return HttpNotFound();
             }
+            var people = GetPersonSelectList(lendingItemViewModel);
+            var items = GetItemsSelectList(lendingItemViewModel);
+            lendingItemViewModel.PeopleSelectList = people;
+            lendingItemViewModel.ItemsSelectList = items;
             return View(lendingItemViewModel);
         }
 
@@ -107,6 +123,32 @@ namespace LendingLibrary.Web.Controllers
                 _lendingRepository.DeleteLending(item);
             }
             return View("Index");
+        }
+
+        private SelectList GetPersonSelectList(LendingViewModel viewModel)
+        {
+            var people = _personRepository.GetAllPeople();
+            people = people ?? new List<Person>();
+            var listItems = people.Select(p => new SelectListItem
+            {
+                Text = p.FirstName,
+                Value = p.PersonId.ToString()
+               
+            });
+            return new SelectList(listItems, "Value", "Text", viewModel.PersonId);
+        }
+
+        private SelectList GetItemsSelectList(LendingViewModel viewModel)
+        {
+            var list = _itemsRepository.GetAllItems();
+            list = list ?? new List<Item>();
+            var listItems = list.Select(p => new SelectListItem
+            {
+                Text = p.ItemName,
+                Value = p.ItemId.ToString()
+
+            });
+            return new SelectList(listItems, "Value", "Text", viewModel.ItemId);
         }
     }
 }

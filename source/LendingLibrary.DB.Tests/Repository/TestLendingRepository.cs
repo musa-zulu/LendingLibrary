@@ -228,13 +228,13 @@ namespace LendingLibrary.DB.Tests.Repository
         public void Update_GivenValidObjects_ShouldCallSaveChanges()
         {
             //---------------Set up test pack-------------------
-            var existingLendingItem = new LendingBuilder().WithStatus(Status.Available).WithRandomGeneratedId().Build();
-            var newLendingItem = new LendingBuilder().WithStatus(Status.NotAvailable).WithRandomGeneratedId().Build();
+            var existingLendingItem = new LendingBuilder().WithStatus(LendingStatus.Available).WithRandomGeneratedId().Build();
+            var newLendingItem = new LendingBuilder().WithStatus(LendingStatus.NotAvailable).WithRandomGeneratedId().Build();
             var dbSet = CreateFakeDbSet(existingLendingItem);
             var lendingLibraryDbContext = CreateLendingLibraryDbContext(dbSet);
             var controller = CreateLendingController(lendingLibraryDbContext);
             //---------------Assert Precondition----------------
-            Assert.AreNotEqual(existingLendingItem.Status, newLendingItem.Status);
+            Assert.AreNotEqual(existingLendingItem.LendingStatus, newLendingItem.LendingStatus);
             //---------------Execute Test ----------------------
             controller.Update(existingLendingItem, existingLendingItem);
             //---------------Test Result -----------------------
