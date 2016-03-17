@@ -42,6 +42,9 @@
                     public const string DateBorrowed = "DateBorrowed";
                     public const string DateReturned = "DateReturned";
                     public const string LendingStatus = "LendingStatus";
+                    public const string PersonName = "PersonName";
+                    public const string ItemName = "ItemName";
+         
                 }
             }
 

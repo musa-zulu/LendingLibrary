@@ -60,6 +60,8 @@ namespace LendingLibrary.Web.Controllers
         {
             if (!ModelState.IsValid) return View(lendingViewModel);
             var lendingEntry = _mappingEngine.Map<LendingViewModel, Lending>(lendingViewModel);
+            SetItemOn(lendingViewModel, lendingEntry);
+            SetPersonOn(lendingViewModel, lendingEntry);
             _lendingRepository.Save(lendingEntry);
             return RedirectToAction("Index");
         }
@@ -91,6 +93,7 @@ namespace LendingLibrary.Web.Controllers
             {
                 var existingItem = _lendingRepository.GetById(itemViewModel.Id);
                 var newItem = _mappingEngine.Map<LendingViewModel, Lending>(itemViewModel);
+                SetItemOn(itemViewModel, newItem);
                 _lendingRepository.Update(existingItem, newItem);
 
                 return RedirectToAction("Index");
@@ -122,7 +125,7 @@ namespace LendingLibrary.Web.Controllers
                 var item = _lendingRepository.GetById(id);
                 _lendingRepository.DeleteLending(item);
             }
-            return View("Index");
+            return RedirectToAction("Index");
         }
 
         private SelectList GetPersonSelectList(LendingViewModel viewModel)
@@ -150,5 +153,24 @@ namespace LendingLibrary.Web.Controllers
             });
             return new SelectList(listItems, "Value", "Text", viewModel.ItemId);
         }
+        //fix this
+        private void SetItemOn(LendingViewModel viewModel, Lending lending)
+        {
+            if (viewModel.ItemId != Guid.Empty)
+            {
+                var item = _itemsRepository.GetById(viewModel.ItemId);
+                lending.ItemName = item.ItemName;
+            }
+        }
+
+        private void SetPersonOn(LendingViewModel viewModel, Lending lending)
+        {
+            if (viewModel.PersonId != Guid.Empty)
+            {
+                var person = _personRepository.GetById(viewModel.PersonId);
+                lending.PersonName = person.FirstName;
+            }
+        }
+
     }
 }

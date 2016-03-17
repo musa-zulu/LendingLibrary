@@ -13,23 +13,22 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Item.ItemName)
+            @Html.DisplayNameFor(model => model.ItemName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Item.Photo)
+            @Html.DisplayNameFor(model => model.PersonName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DaysLentOut)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Person.FirstName)
+            @Html.DisplayNameFor(model => model.DateBorrowed)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Person.Email)
+            @Html.DisplayNameFor(model => model.DateReturned)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Person.PhoneNumber)
-        </th>
+        
+       
         <th></th>
     </tr>
 
@@ -37,23 +36,22 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Item.ItemName)
+                @Html.DisplayFor(modelItem => item.ItemName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Item.Photo)
+                @Html.DisplayFor(modelItem => item.PersonName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DaysLentOut)
             </td>
+           
             <td>
-                @Html.DisplayFor(modelItem => item.Person.FirstName)
+                @Html.DisplayFor(modelItem => item.DateBorrowed)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Person.Email)
+                @Html.DisplayFor(modelItem => item.DateReturned)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Person.PhoneNumber)
-            </td>
+           
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { id = item.Id })

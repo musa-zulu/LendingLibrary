@@ -4,7 +4,7 @@ using LendingTable = LendingLibrary.DB.DbConstants.Tables.LendingTable;
 
 namespace LendingLibrary.DB.Mapping
 {
-   public class LendingMap : EntityTypeConfiguration<Lending>
+    public class LendingMap : EntityTypeConfiguration<Lending>
     {
         public LendingMap()
         {
@@ -16,6 +16,7 @@ namespace LendingLibrary.DB.Mapping
             Property(p => p.DateReturned).HasColumnName(LendingTable.Columns.DateReturned);
             Property(p => p.DateBorrowed).HasColumnName(LendingTable.Columns.DateBorrowed);
             Property(p => p.LendingStatus).HasColumnName(LendingTable.Columns.LendingStatus);
+
         }
     }
 }

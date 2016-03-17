@@ -7,9 +7,12 @@ namespace LendingLibrary.Web.ViewModels
 {
     public class LendingViewModel : ViewModelBase
     {
-        public Person Person { get; set; }
+        //  public Person Person { get; set; }
+        [Display(Name = "Borrowed By")]
+        public string PersonName { get; set; }
         public Guid PersonId { get; set; }
-        public Item Item { get; set; }
+        [Display(Name = "Item Name")]
+        public string ItemName { get; set; }
         public Guid ItemId { get; set; }
         [Required]
         [Display(Name="Date Borrowed")]
@@ -20,7 +23,7 @@ namespace LendingLibrary.Web.ViewModels
 
         public SelectList PeopleSelectList { get; set; }
         public SelectList ItemsSelectList { get; set; }
-
+        [Display(Name = "Days Lent Out")]
         public int DaysLentOut
         {
             get

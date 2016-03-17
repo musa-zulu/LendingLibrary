@@ -40,6 +40,7 @@ namespace LendingLibrary.DB.Repository
         {
             if (lending == null) throw new ArgumentNullException(nameof(lending));
             _lendingLibraryDbContext.Lendings.Remove(lending);
+            _lendingLibraryDbContext.SaveChanges();
         }
 
         public void Update(Lending existingBorrowedItem, Lending newItem)
