@@ -27,6 +27,8 @@ namespace LendingLibrary.Web.Controllers
         public LendingController(ILendingRepository lendingRepository, IMappingEngine mappingEngine, IPersonRepository personRepository, IItemsRepository itemsRepository) : this(lendingRepository)
         {
             if (mappingEngine == null) throw new ArgumentNullException(nameof(mappingEngine));
+            if (personRepository == null) throw new ArgumentNullException(nameof(personRepository));
+            if (itemsRepository == null) throw new ArgumentNullException(nameof(itemsRepository));
             this._mappingEngine = mappingEngine;
             _personRepository = personRepository;
             _itemsRepository = itemsRepository;
@@ -94,6 +96,7 @@ namespace LendingLibrary.Web.Controllers
                 var existingItem = _lendingRepository.GetById(itemViewModel.Id);
                 var newItem = _mappingEngine.Map<LendingViewModel, Lending>(itemViewModel);
                 SetItemOn(itemViewModel, newItem);
+                SetPersonOn(itemViewModel, newItem);
                 _lendingRepository.Update(existingItem, newItem);
 
                 return RedirectToAction("Index");

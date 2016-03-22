@@ -53,7 +53,7 @@ namespace LendingLibrary.DB.Repository
             existingItem.DateLastModified = newItem.DateLastModified;
             existingItem.LastModifiedUsername = newItem.LastModifiedUsername;
             existingItem.Photo = newItem.Photo;
-
+            existingItem.ItemDescription = newItem.ItemDescription;
             _lendingLibraryDbContext.SaveChanges();
         }
     }

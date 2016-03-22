@@ -53,6 +53,7 @@ namespace LendingLibrary.DB.Repository
             existingBorrowedItem.DateBorrowed = newItem.DateBorrowed;
             existingBorrowedItem.DateReturned = newItem.DateReturned;
             existingBorrowedItem.LendingStatus = newItem.LendingStatus;
+         
       
             _lendingLibraryDbContext.SaveChanges();
         }
