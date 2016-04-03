@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Domain\TestEntityBase.cs" />
     <Compile Include="Domain\TestItem.cs" />
+    <Compile Include="Domain\TestLending.cs" />
     <Compile Include="Domain\TestPerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

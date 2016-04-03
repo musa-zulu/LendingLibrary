@@ -6,27 +6,31 @@ using PeanutButter.TestUtils.Generic;
 namespace LendingLibrary.Core.Tests.Domain
 {
     [TestFixture]
-    public class TestItem
+    public class TestLending
     {
         [Test]
-        public void Construct()
+        public void Contruct()
         {
             //---------------Set up test pack-------------------
 
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            Assert.DoesNotThrow(() => new Item());
+            Assert.DoesNotThrow(() => new Lending());
             //---------------Test Result -----------------------
         }
 
+        [TestCase("LedingId", typeof(Guid))]
+        [TestCase("PersonId", typeof(Guid))]
         [TestCase("ItemId", typeof(Guid))]
-        [TestCase("ItemName", typeof(string))]
-        [TestCase("ItemDescription", typeof(string))]
+        [TestCase("PersonName", typeof(string))]
+        [TestCase("DateBorrowed", typeof(DateTime?))]
+        [TestCase("DateReturned", typeof(DateTime?))]
+        [TestCase("LendingStatus", typeof(LendingStatus?))]
         public void Type_ShouldHaveProperty(string propertyName, Type propertyType)
         {
             //---------------Set up test pack-------------------
-            var sut = typeof(Item);
+            var sut = typeof(Lending);
 
             //---------------Assert Precondition----------------
 
