@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Web.Mvc;
@@ -69,7 +70,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(Substitute.For<ILendingRepository>(), null,  Substitute.For<IPersonRepository>(), Substitute.For<IItemsRepository>()));
+            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(Substitute.For<ILendingRepository>(), null, Substitute.For<IPersonRepository>(), Substitute.For<IItemsRepository>()));
             //---------------Test Result -----------------------
             Assert.AreEqual("mappingEngine", ex.ParamName);
         }
@@ -78,7 +79,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Construct_GivenIItemsRepositoryIsNull_ShouldThrow()
         {
             //---------------Set up test pack-------------------
-            
+
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
@@ -95,13 +96,26 @@ namespace LendingLibrary.Web.Tests.Controllers
         public void Construct_GivenIPersonRepositoryIsNull_ShouldThrow()
         {
             //---------------Set up test pack-------------------
-            
+
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var ex = Assert.Throws<ArgumentNullException>(()=> new LendingController(Substitute.For<ILendingRepository>(), Substitute.For<IMappingEngine>(), null, Substitute.For<IItemsRepository>()));
+            var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(Substitute.For<ILendingRepository>(), Substitute.For<IMappingEngine>(), null, Substitute.For<IItemsRepository>()));
             //---------------Test Result -----------------------
             Assert.AreEqual("personRepository", ex.ParamName);
+        }
+
+        [Test]
+        public void Index_ShouldReturnView()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreateLendingController();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var results = controller.Index();
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(results);
         }
 
         [Test]
@@ -165,6 +179,217 @@ namespace LendingLibrary.Web.Tests.Controllers
         }
 
         [Test]
+        public void Create_ShouldReturnViewWithViewModel()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreateLendingController();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var results = (ViewResult)controller.Create();
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(results);
+            var model = results.Model;
+            Assert.IsInstanceOf<LendingViewModel>(model);
+        }
+
+        [Test]
+        public void Create_ShouldCallGetAllPeopleFromPersonRepo()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var controller = CreateLendingController(null, null, personRepository, null);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var results = controller.Create();
+            //---------------Test Result -----------------------
+            personRepository.Received().GetAllPeople();
+        }
+
+        [Test]
+        public void Create_ShouldCallGetAllItemsFromItemsRepo()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var controller = CreateLendingController(null, null, null, itemsRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var results = controller.Create();
+            //---------------Test Result -----------------------
+            itemsRepository.Received().GetAllItems();
+        }
+
+        [Test]
+        public void Create_GivenNoPeopleExist_ShouldNotSetPeopleSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreateLendingController();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.PeopleSelectList);
+            Assert.AreEqual(0, viewModel.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenOnePersonExistOnPersornRepo_ShouldSetPeopleSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var person = new PersonBuilder().WithRandomProps().Build();
+            personRepository.GetAllPeople().Returns(new List<Person> { person });
+            var controller = CreateLendingController(null, null, personRepository, null);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.PeopleSelectList);
+            Assert.AreEqual(person.PersonId.ToString(), viewModel.PeopleSelectList.FirstOrDefault().Value);
+            Assert.AreEqual(person.FirstName, viewModel.PeopleSelectList.FirstOrDefault().Text);
+            Assert.AreEqual(1, viewModel.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenTwoPeopleExistOnPersornRepo_ShouldSetPeopleSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var person1 = new PersonBuilder().Build();
+            var person2 = new PersonBuilder().Build();
+            personRepository.GetAllPeople().Returns(new List<Person> { person1, person2 });
+            var controller = CreateLendingController(null, null, personRepository, null);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.PeopleSelectList);
+            Assert.AreEqual(2, viewModel.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenManyPeopleExistOnPersornRepo_ShouldSetPeopleSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var person1 = new PersonBuilder().Build();
+            var person2 = new PersonBuilder().Build();
+            var person3 = new PersonBuilder().Build();
+            personRepository.GetAllPeople().Returns(new List<Person> { person1, person2, person3 });
+            var controller = CreateLendingController(null, null, personRepository, null);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.PeopleSelectList);
+            Assert.AreEqual(3, viewModel.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenNoItemExist_ShouldNotSetItemsSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreateLendingController();
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.ItemsSelectList);
+            Assert.AreEqual(0, viewModel.ItemsSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenOneItemExist_ShouldSetItemsSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var item = new ItemBuilder().WithRandomProps().Build();
+            itemsRepository.GetAllItems().Returns(new List<Item> { item });
+            var controller = CreateLendingController(null, null, null, itemsRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.ItemsSelectList);
+            Assert.AreEqual(item.ItemId.ToString(), viewModel.ItemsSelectList.FirstOrDefault().Value);
+            Assert.AreEqual(item.ItemName, viewModel.ItemsSelectList.FirstOrDefault().Text);
+            Assert.AreEqual(1, viewModel.ItemsSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenTwoItemsExist_ShouldSetItemsSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var item1 = new ItemBuilder().WithRandomProps().Build();
+            var item2 = new ItemBuilder().WithRandomProps().Build();
+            itemsRepository
+                .GetAllItems()
+                .Returns(new List<Item> { item1, item2 });
+            var controller = CreateLendingController(null, null, null, itemsRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.ItemsSelectList);
+            Assert.AreEqual(2, viewModel.ItemsSelectList.Count());
+        }
+
+        [Test]
+        public void Create_GivenThreeItemsExist_ShouldSetItemsSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var item1 = new ItemBuilder().WithRandomProps().Build();
+            var item2 = new ItemBuilder().WithRandomProps().Build();
+            var item3 = new ItemBuilder().WithRandomProps().Build();
+            itemsRepository
+                .GetAllItems()
+                .Returns(new List<Item> { item1, item2, item3 });
+            var controller = CreateLendingController(null, null, null, itemsRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Create() as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var viewModel = result.Model as LendingViewModel;
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.ItemsSelectList);
+            Assert.AreEqual(3, viewModel.ItemsSelectList.Count());
+        }
+
+        [Test]
         public void Create_POST_ShouldHaveHttpPostAttribute()
         {
             //---------------Set up test pack-------------------
@@ -189,58 +414,131 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.NotNull(validAntityForgeryTokenAttribute);
         }
-        /* 
-            [Test]
-            public void Create_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
-            {
-                //---------------Set up test pack-------------------
-                var mappingEngine = Substitute.For<IMappingEngine>();
-                var itemRepository = Substitute.For<IItemsRepository>();
-                var viewModel = LendingViewModelBuilder.BuildRandom();
-                itemRepository.GetById(viewModel.ItemId).Returns(Arg.Any<Item>());
-                var controller = CreateLendingController(null, mappingEngine);
-                //---------------Assert Precondition----------------
-                Assert.IsTrue(controller.ModelState.IsValid);
-                //---------------Execute Test ----------------------
-                var result = controller.Create(viewModel);
-                //---------------Test Result -----------------------
-                mappingEngine.Received(1).Map<LendingViewModel, Lending>(viewModel);
-            }
 
-               [Test]
-                    public void Create_POST_GivenModelStateIsValid_ShouldCallSaveOnPersonRepo()
-                    {
-                        //---------------Set up test pack-------------------
-                        var viewModel = LendingViewModelBuilder.BuildRandom();
-                        var mappingEngine = _container.Resolve<IMappingEngine>();
-                        var lendingRepository = Substitute.For<ILendingRepository>();
-                        var controller = CreateLendingController(lendingRepository, mappingEngine);
+        [Test]
+        public void Create_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var viewModel = new LendingViewModel();
+            var controller = CreateLendingController(null, mappingEngine);
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Create(viewModel);
+            //---------------Test Result -----------------------
+            mappingEngine.Received(1).Map<LendingViewModel, Lending>(viewModel);
+        }
 
-                        //---------------Assert Precondition----------------
-                        Assert.IsTrue(controller.ModelState.IsValid);
-                        //---------------Execute Test ----------------------
-                        var result = controller.Create(viewModel);
-                        //---------------Test Result -----------------------
-                        lendingRepository.Received(1).Save(Arg.Any<Lending>());
-                    }
+        [Test]
+        public void Create_POST_GivenItemIdIsNotNull_ShouldSetItemName()
+        {
+            //---------------Set up test pack-------------------
+            var item = new ItemBuilder().WithRandomProps().Build();
+            var person = new PersonBuilder().Build();
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var lending = new LendingBuilder().WithRandomProps().Build();
+            var viewModel = new LendingViewModelBuilder().WithRandomProps().Build();
+            mappingEngine.Map<LendingViewModel, Lending>(viewModel).Returns(lending);
+            itemsRepository.GetById(viewModel.ItemId).Returns(item);
+            personRepository.GetById(viewModel.PersonId).Returns(person);
+            var controller = CreateLendingController(null, mappingEngine, personRepository, itemsRepository);
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Create(viewModel) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.AreEqual(item.ItemName, lending.ItemName);
+        }
 
-                    [Test]
-                    public void Create_POST_GivenModelStateIsValid_ShouldRedirectToIndexPage()
-                    {
-                        //---------------Set up test pack-------------------
-                        var viewModel = LendingViewModelBuilder.BuildRandom();
-                        var mappingEngine = _container.Resolve<IMappingEngine>();
-                        var lendingRepository = Substitute.For<ILendingRepository>();
-                        var controller = CreateLendingController(lendingRepository, mappingEngine);
+        [Test]
+        public void Create_POST_GivenPersonIdIsNotNull_ShouldSetPersonName()
+        {
+            //---------------Set up test pack-------------------
+            var item = new ItemBuilder().WithRandomProps().Build();
+            var person = new PersonBuilder().WithRandomProps().Build();
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var lending = new LendingBuilder().WithRandomProps().Build();
+            var viewModel = new LendingViewModelBuilder().WithRandomProps().Build();
+            mappingEngine.Map<LendingViewModel, Lending>(viewModel).Returns(lending);
+            itemsRepository.GetById(viewModel.ItemId).Returns(item);
+            personRepository.GetById(viewModel.PersonId).Returns(person);
+            var controller = CreateLendingController(null, mappingEngine, personRepository, itemsRepository);
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Create(viewModel) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.AreEqual(lending.PersonName, person.FirstName);
+        }
 
-                        //---------------Assert Precondition----------------
-                        Assert.IsTrue(controller.ModelState.IsValid);
-                        //---------------Execute Test ----------------------
-                        var result = controller.Create(viewModel) as RedirectToRouteResult;
-                        //---------------Test Result -----------------------
-                        Assert.IsNotNull(result);
-                        Assert.AreEqual("Index", result.RouteValues["Action"]);
-                    }*/
+        [Test]
+        public void Create_POST_GivenModelStateIsValid_ShouldCallSaveOnPersonRepo()
+        {
+            //---------------Set up test pack-------------------
+            var viewModel = new LendingViewModel();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var controller = CreateLendingController(lendingRepository, mappingEngine);
+
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Create(viewModel);
+            //---------------Test Result -----------------------
+            lendingRepository.Received(1).Save(Arg.Any<Lending>());
+        }
+
+        [Test]
+        public void Create_POST_GivenModelStateIsValid_ShouldSaveLendingEntryToDB()
+        {
+            //---------------Set up test pack-------------------
+            var item = new ItemBuilder().WithRandomProps().Build();
+            var person = new PersonBuilder().WithRandomProps().Build();
+            var mappingEngine = Substitute.For<IMappingEngine>();
+            var itemsRepository = Substitute.For<IItemsRepository>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var lending = new LendingBuilder().WithRandomProps().Build();
+            var viewModel = new LendingViewModelBuilder().WithRandomProps().Build();
+            mappingEngine.Map<LendingViewModel, Lending>(viewModel).Returns(lending);
+            itemsRepository.GetById(viewModel.ItemId).Returns(item);
+            personRepository.GetById(viewModel.PersonId).Returns(person);
+            var controller = CreateLendingController(lendingRepository, mappingEngine, personRepository, itemsRepository);
+
+            Lending savedLending = null;
+            lendingRepository.When(x => x.Save(Arg.Any<Lending>())).Do(info => savedLending = (Lending)info[0]);
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Create(viewModel) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.AreEqual(lending.LedingId, savedLending.LedingId);
+            Assert.AreEqual(lending.ItemId, savedLending.ItemId);
+            Assert.AreEqual(lending.PersonId, savedLending.PersonId);
+        }
+
+        [Test]
+        public void Create_POST_GivenModelStateIsValid_ShouldRedirectToIndexPage()
+        {
+            //---------------Set up test pack-------------------
+            var viewModel = new LendingViewModel();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var controller = CreateLendingController(lendingRepository, mappingEngine);
+
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Create(viewModel) as RedirectToRouteResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Index", result.RouteValues["Action"]);
+        }
 
         [Test]
         public void Create_POST_GivenModelStateIsInvalid_ShouldReturnViewWithViewModel()
@@ -339,6 +637,221 @@ namespace LendingLibrary.Web.Tests.Controllers
         }
 
         [Test]
+        public void Edit_ShouldCallGetAllPeopleFromPersonRepo()
+        {
+            //---------------Set up test pack-------------------
+            var personRepository = Substitute.For<IPersonRepository>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            lendingRepository.GetById(id).Returns(lending);
+            var controller = CreateLendingController(lendingRepository, mappingEngine, personRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id);
+            //---------------Test Result -----------------------
+            personRepository.Received().GetAllPeople();
+        }
+
+        [Test]
+        public void Edit_GivenNoPersonIsReturnedFromDB_ShouldNotSetPersonSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            lendingRepository.GetById(id).Returns(lending);
+            var controller = CreateLendingController(lendingRepository, mappingEngine);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(0, model.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Edit_GivenOnePersonIsReturnedFromDB_ShouldSetPersonSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            lendingRepository.GetById(id).Returns(lending);
+            var person = new PersonBuilder().WithRandomProps().Build();
+            personRepository.GetAllPeople().Returns(new List<Person> { person });
+            var controller = CreateLendingController(lendingRepository, mappingEngine, personRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(1, model.PeopleSelectList.Count());
+            Assert.AreEqual(person.PersonId.ToString(), model.PeopleSelectList.FirstOrDefault().Value);
+            Assert.AreEqual(person.FirstName, model.PeopleSelectList.FirstOrDefault().Text);
+        }
+
+        [Test]
+        public void Edit_GivenTwoPeopleAreReturnedFromDB_ShouldSetPersonSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            lendingRepository.GetById(id).Returns(lending);
+            var person1 = new PersonBuilder().WithRandomProps().Build();
+            var person2 = new PersonBuilder().WithRandomProps().Build();
+            personRepository.GetAllPeople().Returns(new List<Person> { person1, person2 });
+            var controller = CreateLendingController(lendingRepository, mappingEngine, personRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(2, model.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Edit_GivenManyPeopleAreReturnedFromDB_ShouldSetPersonSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var personRepository = Substitute.For<IPersonRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            lendingRepository.GetById(id).Returns(lending);
+            var person1 = new PersonBuilder().WithRandomProps().Build();
+            var person2 = new PersonBuilder().WithRandomProps().Build();
+            var person3 = new PersonBuilder().WithRandomProps().Build();
+            personRepository.GetAllPeople().Returns(new List<Person> { person1, person2, person3 });
+            var controller = CreateLendingController(lendingRepository, mappingEngine, personRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(3, model.PeopleSelectList.Count());
+        }
+
+        [Test]
+        public void Edit_GivenNoItemIsReturnedFromDB_ShouldNotSetItemSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            lendingRepository.GetById(id).Returns(lending);
+            var controller = CreateLendingController(lendingRepository, mappingEngine);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(0, model.ItemsSelectList.Count());
+        }
+
+        [Test]
+        public void Edit_GivenOneItemIsReturnedFromDB_ShouldSetItemSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var itemRepository = Substitute.For<IItemsRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            lendingRepository.GetById(id).Returns(lending);
+            var item = new ItemBuilder().WithRandomProps().Build();
+            itemRepository.GetAllItems().Returns(new List<Item> { item });
+            var controller = CreateLendingController(lendingRepository, mappingEngine, null, itemRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(1, model.ItemsSelectList.Count());
+            Assert.AreEqual(item.ItemId.ToString(), model.ItemsSelectList.FirstOrDefault().Value);
+            Assert.AreEqual(item.ItemName, model.ItemsSelectList.FirstOrDefault().Text);
+        }
+
+        [Test]
+        public void Edit_GivenTwoItemsAreReturnedFromDB_ShouldSetItemSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var itemRepository = Substitute.For<IItemsRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            lendingRepository.GetById(id).Returns(lending);
+            var item1 = new ItemBuilder().WithRandomProps().Build();
+            var item2 = new ItemBuilder().WithRandomProps().Build();
+            itemRepository.GetAllItems().Returns(new List<Item> { item1, item2 });
+            var controller = CreateLendingController(lendingRepository, mappingEngine, null, itemRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(2, model.ItemsSelectList.Count());
+        }
+
+        [Test]
+        public void Edit_GivenManyItemsAreReturnedFromDB_ShouldSetItemsSelectList()
+        {
+            //---------------Set up test pack-------------------
+            var lendingRepository = Substitute.For<ILendingRepository>();
+            var itemRepository = Substitute.For<IItemsRepository>();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lending = new LendingBuilder().WithRandomGeneratedId().Build();
+            var id = lending.LedingId;
+            lendingRepository.GetById(id).Returns(lending);
+            var item1 = new ItemBuilder().WithRandomProps().Build();
+            var item2 = new ItemBuilder().WithRandomProps().Build();
+            var item3 = new ItemBuilder().WithRandomProps().Build();
+            itemRepository.GetAllItems().Returns(new List<Item> { item1, item2, item3 });
+            var controller = CreateLendingController(lendingRepository, mappingEngine, null, itemRepository);
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(id) as ViewResult;
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
+            var model = result.Model as LendingViewModel;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(3, model.ItemsSelectList.Count());
+        }
+
+        [Test]
         public void Edit_ShouldReturnViewWithItemViewModel()
         {
             //---------------Set up test pack-------------------
@@ -385,188 +898,186 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.NotNull(antiForgeryAttribute);
         }
 
-        /*      [Test]
-           public void Edit_POST_GivenModelStateIsValid_ShouldCallGetByIdFromOrderRepo()
-           {
-               //---------------Set up test pack-------------------
-               var lendingsViewModel = new LendingViewModelBuilder().WithRandomProps().Build();
-               var mappingEngine = _container.Resolve<IMappingEngine>();
-               var lendingRepository = Substitute.For<ILendingRepository>();
+        [Test]
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallGetByIdFromOrderRepo()
+        {
+            //---------------Set up test pack-------------------
+            var lendingsViewModel = new LendingViewModel();
+            var mappingEngine = _container.Resolve<IMappingEngine>();
+            var lendingRepository = Substitute.For<ILendingRepository>();
 
-               var controller = CreateLendingController(lendingRepository, mappingEngine);
+            var controller = CreateLendingController(lendingRepository, mappingEngine);
 
-               //---------------Assert Precondition----------------
-               Assert.IsTrue(controller.ModelState.IsValid);
-               //---------------Execute Test ----------------------
-               var result = controller.Edit(lendingsViewModel);
-               //---------------Test Result -----------------------
-               lendingRepository.Received().GetById(lendingsViewModel.Id);
-           }
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(lendingsViewModel);
+            //---------------Test Result -----------------------
+            lendingRepository.Received().GetById(lendingsViewModel.Id);
+        }
 
         [Test]
-           public void Edit_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
-           {
-               //---------------Set up test pack-------------------
-               var itemViewModel = new ItemsViewModelBuilder().WithRandomProps().Build();
-               var mappingEngine = Substitute.For<IMappingEngine>();
+        public void Edit_POST_GivenModelStateIsValid_ShouldCallMappingEngine()
+        {
+            //---------------Set up test pack-------------------
+            var viewModel = new LendingViewModel();
+            var mappingEngine = Substitute.For<IMappingEngine>();
 
-               var itemsController = CreateItemsControllerBuilder()
-                                   .WithMappingEngine(mappingEngine)
-                                   .Build();
-               //---------------Assert Precondition----------------
-               Assert.IsTrue(itemsController.ModelState.IsValid);
-               //---------------Execute Test ----------------------
-               var result = itemsController.Edit(itemViewModel);
-               //---------------Test Result -----------------------
-               mappingEngine.Received().Map<ItemViewModel, Item>(itemViewModel);
-           }
+            var controller = CreateLendingController(null, mappingEngine);
+            //---------------Assert Precondition----------------
+            Assert.IsTrue(controller.ModelState.IsValid);
+            //---------------Execute Test ----------------------
+            var result = controller.Edit(viewModel);
+            //---------------Test Result -----------------------
+            mappingEngine.Received().Map<LendingViewModel, Lending>(viewModel);
+        }
 
-           [Test]
-           public void Edit_POST_GivenModelStateIsValid_ShouldCallUpdateFromItemsRepo()
-           {
-               //---------------Set up test pack-------------------
-               var item = new ItemBuilder().WithRandomProps().Build();
-               var itemViewModel = ItemsViewModelBuilder.BuildRandom();
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               itemsRepository.GetById(item.ItemId).Returns(item);
-               var mappingEngine = _container.Resolve<IMappingEngine>();
+        /*     [Test]
+            public void Edit_POST_GivenModelStateIsValid_ShouldCallUpdateFromItemsRepo()
+            {
+                //---------------Set up test pack-------------------
+                var item = new ItemBuilder().WithRandomProps().Build();
+                var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+                var itemsRepository = Substitute.For<IItemsRepository>();
+                itemsRepository.GetById(item.ItemId).Returns(item);
+                var mappingEngine = _container.Resolve<IMappingEngine>();
 
-               var itemsController = CreateItemsControllerBuilder()
-                                   .WithItemsRepository(itemsRepository)
-                                   .WithMappingEngine(mappingEngine)
-                                   .Build();
-               //---------------Assert Precondition----------------
-               Assert.IsTrue(itemsController.ModelState.IsValid);
-               //---------------Execute Test ----------------------
-               var result = itemsController.Edit(itemViewModel);
-               //---------------Test Result -----------------------
-               itemsRepository.Received().Update(Arg.Any<Item>(), Arg.Any<Item>());
-           }
+                var itemsController = CreateItemsControllerBuilder()
+                                    .WithItemsRepository(itemsRepository)
+                                    .WithMappingEngine(mappingEngine)
+                                    .Build();
+                //---------------Assert Precondition----------------
+                Assert.IsTrue(itemsController.ModelState.IsValid);
+                //---------------Execute Test ----------------------
+                var result = itemsController.Edit(itemViewModel);
+                //---------------Test Result -----------------------
+                itemsRepository.Received().Update(Arg.Any<Item>(), Arg.Any<Item>());
+            }
 
-           [Test]
-           public void Edit_POST_GivenModelStateIsValid_ShouldRedirectToItemsIndexPage()
-           {
-               //---------------Set up test pack-------------------
-               var itemViewModel = ItemsViewModelBuilder.BuildRandom();
-               var itemsController = CreateItemsControllerBuilder()
-                                   .Build();
-               //---------------Assert Precondition----------------
-               Assert.IsTrue(itemsController.ModelState.IsValid);
-               //---------------Execute Test ----------------------
-               var result = itemsController.Edit(itemViewModel) as RedirectToRouteResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               Assert.AreEqual("Index", result.RouteValues["Action"]);
-           }
+            [Test]
+            public void Edit_POST_GivenModelStateIsValid_ShouldRedirectToItemsIndexPage()
+            {
+                //---------------Set up test pack-------------------
+                var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+                var itemsController = CreateItemsControllerBuilder()
+                                    .Build();
+                //---------------Assert Precondition----------------
+                Assert.IsTrue(itemsController.ModelState.IsValid);
+                //---------------Execute Test ----------------------
+                var result = itemsController.Edit(itemViewModel) as RedirectToRouteResult;
+                //---------------Test Result -----------------------
+                Assert.IsNotNull(result);
+                Assert.AreEqual("Index", result.RouteValues["Action"]);
+            }
 
-           [Test]
-           public void Edit_POST_GivenModelStateIsInvalid_ShouldReturnViewWithViewItemsViewModel()
-           {
-               //---------------Set up test pack-------------------
-               var itemViewModel = ItemsViewModelBuilder.BuildRandom();
+            [Test]
+            public void Edit_POST_GivenModelStateIsInvalid_ShouldReturnViewWithViewItemsViewModel()
+            {
+                //---------------Set up test pack-------------------
+                var itemViewModel = ItemsViewModelBuilder.BuildRandom();
 
-               var itemsController = CreateItemsControllerBuilder().Build();
-               itemsController.ModelState.AddModelError("key", "error message");
-               //---------------Assert Precondition----------------
-               Assert.IsFalse(itemsController.ModelState.IsValid);
-               //---------------Execute Test ----------------------
-               var result = itemsController.Edit(itemViewModel) as ViewResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               var model = result.Model;
-               Assert.IsNotNull(model);
-               Assert.IsInstanceOf<ItemViewModel>(model);
-           }
+                var itemsController = CreateItemsControllerBuilder().Build();
+                itemsController.ModelState.AddModelError("key", "error message");
+                //---------------Assert Precondition----------------
+                Assert.IsFalse(itemsController.ModelState.IsValid);
+                //---------------Execute Test ----------------------
+                var result = itemsController.Edit(itemViewModel) as ViewResult;
+                //---------------Test Result -----------------------
+                Assert.IsNotNull(result);
+                var model = result.Model;
+                Assert.IsNotNull(model);
+                Assert.IsInstanceOf<ItemViewModel>(model);
+            }
 
-           [Test]
-           public void Delete_GivenItemIdIsNull_ShouldReturnHttpStatusOfBadRequest()
-           {
-               //---------------Set up test pack-------------------
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               var itemsControllerBuilder = CreateItemsControllerBuilder()
-                                           .WithItemsRepository(itemsRepository)
-                                           .Build();
-               //---------------Assert Precondition----------------
-               //---------------Execute Test ----------------------
-               var result = itemsControllerBuilder.Delete((Guid?)null) as HttpStatusCodeResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
-           }
+            [Test]
+            public void Delete_GivenItemIdIsNull_ShouldReturnHttpStatusOfBadRequest()
+            {
+                //---------------Set up test pack-------------------
+                var itemsRepository = Substitute.For<IItemsRepository>();
+                var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                            .WithItemsRepository(itemsRepository)
+                                            .Build();
+                //---------------Assert Precondition----------------
+                //---------------Execute Test ----------------------
+                var result = itemsControllerBuilder.Delete((Guid?)null) as HttpStatusCodeResult;
+                //---------------Test Result -----------------------
+                Assert.IsNotNull(result);
+                Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
+            }
 
-           [Test]
-           public void Delete_GivenAValidId_ShouldCallGetById()
-           {
-               //---------------Set up test pack-------------------
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               var itemsControllerBuilder = CreateItemsControllerBuilder()
-                                           .WithItemsRepository(itemsRepository)
-                                           .Build();
-               var item = ItemBuilder.BuildRandom();
-               //---------------Assert Precondition----------------
+            [Test]
+            public void Delete_GivenAValidId_ShouldCallGetById()
+            {
+                //---------------Set up test pack-------------------
+                var itemsRepository = Substitute.For<IItemsRepository>();
+                var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                            .WithItemsRepository(itemsRepository)
+                                            .Build();
+                var item = ItemBuilder.BuildRandom();
+                //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               itemsControllerBuilder.Delete(item.ItemId);
-               //---------------Test Result -----------------------
-               itemsRepository.Received(1).GetById(item.ItemId);
-           }
+                //---------------Execute Test ----------------------
+                itemsControllerBuilder.Delete(item.ItemId);
+                //---------------Test Result -----------------------
+                itemsRepository.Received(1).GetById(item.ItemId);
+            }
 
-           [Test]
-           public void Delete_GivenAnItemIsReturnedFromRepo_ShouldcallMappingEngine()
-           {
-               //---------------Set up test pack-------------------
-               var mappingEngine = Substitute.For<IMappingEngine>();
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               var item = ItemBuilder.BuildRandom();
-               itemsRepository.GetById(item.ItemId).Returns(item);
-               var itemsControllerBuilder = CreateItemsControllerBuilder()
-                                           .WithMappingEngine(mappingEngine)
-                                           .WithItemsRepository(itemsRepository)
-                                           .Build();
-               //---------------Assert Precondition----------------
+            [Test]
+            public void Delete_GivenAnItemIsReturnedFromRepo_ShouldcallMappingEngine()
+            {
+                //---------------Set up test pack-------------------
+                var mappingEngine = Substitute.For<IMappingEngine>();
+                var itemsRepository = Substitute.For<IItemsRepository>();
+                var item = ItemBuilder.BuildRandom();
+                itemsRepository.GetById(item.ItemId).Returns(item);
+                var itemsControllerBuilder = CreateItemsControllerBuilder()
+                                            .WithMappingEngine(mappingEngine)
+                                            .WithItemsRepository(itemsRepository)
+                                            .Build();
+                //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               itemsControllerBuilder.Delete(item.ItemId);
-               //---------------Test Result -----------------------
-               mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
-           }
+                //---------------Execute Test ----------------------
+                itemsControllerBuilder.Delete(item.ItemId);
+                //---------------Test Result -----------------------
+                mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
+            }
 
-           [Test]
-           public void Delete_GivenItemsViewModelIsNull_ShouldReturnHttpNotFound()
-           {
-               //---------------Set up test pack-------------------
-               var itemsController = CreateItemsControllerBuilder().Build();
-               //---------------Assert Precondition----------------
+            [Test]
+            public void Delete_GivenItemsViewModelIsNull_ShouldReturnHttpNotFound()
+            {
+                //---------------Set up test pack-------------------
+                var itemsController = CreateItemsControllerBuilder().Build();
+                //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               var result = itemsController.Delete(Guid.NewGuid()) as HttpStatusCodeResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
-           }
+                //---------------Execute Test ----------------------
+                var result = itemsController.Delete(Guid.NewGuid()) as HttpStatusCodeResult;
+                //---------------Test Result -----------------------
+                Assert.IsNotNull(result);
+                Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+            }
 
-           [Test]
-           public void Delete_ShouldReturnViewWithItemsViewModel()
-           {
-               //---------------Set up test pack-------------------
-               var item = new ItemBuilder().WithRandomProps().Build();
-               var mappingEngine = _container.Resolve<IMappingEngine>();
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               itemsRepository.GetById(item.ItemId).Returns(item);
-               var itemsController = CreateItemsControllerBuilder()
-                   .WithItemsRepository(itemsRepository)
-                   .WithMappingEngine(mappingEngine)
-                   .Build();
-               //---------------Assert Precondition----------------
+            [Test]
+            public void Delete_ShouldReturnViewWithItemsViewModel()
+            {
+                //---------------Set up test pack-------------------
+                var item = new ItemBuilder().WithRandomProps().Build();
+                var mappingEngine = _container.Resolve<IMappingEngine>();
+                var itemsRepository = Substitute.For<IItemsRepository>();
+                itemsRepository.GetById(item.ItemId).Returns(item);
+                var itemsController = CreateItemsControllerBuilder()
+                    .WithItemsRepository(itemsRepository)
+                    .WithMappingEngine(mappingEngine)
+                    .Build();
+                //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               var result = itemsController.Delete(item.ItemId) as ViewResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               var model = result.Model;
-               Assert.IsInstanceOf<ItemViewModel>(model);
-           }
-   */
+                //---------------Execute Test ----------------------
+                var result = itemsController.Delete(item.ItemId) as ViewResult;
+                //---------------Test Result -----------------------
+                Assert.IsNotNull(result);
+                var model = result.Model;
+                Assert.IsInstanceOf<ItemViewModel>(model);
+            }
+    */
         [Test]
         public void DeleteConfirmed_ShouldHaveHttpPostAttribute()
         {
@@ -592,43 +1103,43 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             Assert.IsNotNull(actionNameAttribute);
         }
-/*
-        [Test]
-        public void DeleteConfirmed_GivenValidId_ShouldCallGetById()
-        {
-            //---------------Set up test pack-------------------
-            var id = Guid.NewGuid();
-            var itemsRepository = Substitute.For<IItemsRepository>();
-            var itemsController = CreateItemsControllerBuilder()
-                .WithItemsRepository(itemsRepository)
+        /*
+                [Test]
+                public void DeleteConfirmed_GivenValidId_ShouldCallGetById()
+                {
+                    //---------------Set up test pack-------------------
+                    var id = Guid.NewGuid();
+                    var itemsRepository = Substitute.For<IItemsRepository>();
+                    var itemsController = CreateItemsControllerBuilder()
+                        .WithItemsRepository(itemsRepository)
 
-                .Build();
-            //---------------Assert Precondition----------------
+                        .Build();
+                    //---------------Assert Precondition----------------
 
-            //---------------Execute Test ----------------------
-            var result = itemsController.DeleteConfirmed(id);
-            //---------------Test Result -----------------------
-            itemsRepository.Received().GetById(id);
-        }
+                    //---------------Execute Test ----------------------
+                    var result = itemsController.DeleteConfirmed(id);
+                    //---------------Test Result -----------------------
+                    itemsRepository.Received().GetById(id);
+                }
 
-        [Test]
-        public void DeleteConfirmed_GivenItemIsReturnedFromRepo_ShouldCallDeleteItem()
-        {
-            //---------------Set up test pack-------------------
-            var item = new ItemBuilder().WithRandomProps().Build();
-            var itemsRepository = Substitute.For<IItemsRepository>();
-            itemsRepository.GetById(item.ItemId).Returns(item);
-            var itemsController = CreateItemsControllerBuilder()
-                .WithItemsRepository(itemsRepository)
+                [Test]
+                public void DeleteConfirmed_GivenItemIsReturnedFromRepo_ShouldCallDeleteItem()
+                {
+                    //---------------Set up test pack-------------------
+                    var item = new ItemBuilder().WithRandomProps().Build();
+                    var itemsRepository = Substitute.For<IItemsRepository>();
+                    itemsRepository.GetById(item.ItemId).Returns(item);
+                    var itemsController = CreateItemsControllerBuilder()
+                        .WithItemsRepository(itemsRepository)
 
-                .Build();
-            //---------------Assert Precondition----------------
+                        .Build();
+                    //---------------Assert Precondition----------------
 
-            //---------------Execute Test ----------------------
-            var result = itemsController.DeleteConfirmed(item.ItemId);
-            //---------------Test Result -----------------------
-            itemsRepository.Received().DeleteItem(item);
-        }*/
+                    //---------------Execute Test ----------------------
+                    var result = itemsController.DeleteConfirmed(item.ItemId);
+                    //---------------Test Result -----------------------
+                    itemsRepository.Received().DeleteItem(item);
+                }*/
 
 
 

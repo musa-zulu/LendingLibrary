@@ -16,7 +16,6 @@ namespace LendingLibrary.Web.Controllers
         private ILendingRepository _lendingRepository;
         private IPersonRepository _personRepository;
         private readonly IItemsRepository _itemsRepository;
-        private IMappingEngine mappingEngine;
 
         public LendingController(ILendingRepository lendingRepository)
         {
@@ -89,19 +88,19 @@ namespace LendingLibrary.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(LendingViewModel itemViewModel)
+        public ActionResult Edit(LendingViewModel lendingViewModel)
         {
             if (ModelState.IsValid)
             {
-                var existingItem = _lendingRepository.GetById(itemViewModel.Id);
-                var newItem = _mappingEngine.Map<LendingViewModel, Lending>(itemViewModel);
-                SetItemOn(itemViewModel, newItem);
-                SetPersonOn(itemViewModel, newItem);
+                var existingItem = _lendingRepository.GetById(lendingViewModel.Id);
+                var newItem = _mappingEngine.Map<LendingViewModel, Lending>(lendingViewModel);
+                SetItemOn(lendingViewModel, newItem);
+                SetPersonOn(lendingViewModel, newItem);
                 _lendingRepository.Update(existingItem, newItem);
 
                 return RedirectToAction("Index");
             }
-            return View(itemViewModel);
+            return View(lendingViewModel);
         }
 
         public ActionResult Delete(Guid? id)
@@ -139,7 +138,6 @@ namespace LendingLibrary.Web.Controllers
             {
                 Text = p.FirstName,
                 Value = p.PersonId.ToString()
-               
             });
             return new SelectList(listItems, "Value", "Text", viewModel.PersonId);
         }
@@ -156,14 +154,12 @@ namespace LendingLibrary.Web.Controllers
             });
             return new SelectList(listItems, "Value", "Text", viewModel.ItemId);
         }
-        //fix this
+       
         private void SetItemOn(LendingViewModel viewModel, Lending lending)
         {
-            if (viewModel.ItemId != Guid.Empty)
-            {
-                var item = _itemsRepository.GetById(viewModel.ItemId);
-                lending.ItemName = item.ItemName;
-            }
+            if (viewModel.ItemId == Guid.Empty) return;
+            var item = _itemsRepository.GetById(viewModel.ItemId);
+            lending.ItemName = item.ItemName;
         }
 
         private void SetPersonOn(LendingViewModel viewModel, Lending lending)
