@@ -12,9 +12,9 @@ namespace LendingLibrary.Web.Controllers
 {
     public class LendingController : Controller
     {
-        private IMappingEngine _mappingEngine;
-        private ILendingRepository _lendingRepository;
-        private IPersonRepository _personRepository;
+        private readonly IMappingEngine _mappingEngine;
+        private readonly ILendingRepository _lendingRepository;
+        private readonly IPersonRepository _personRepository;
         private readonly IItemsRepository _itemsRepository;
 
         public LendingController(ILendingRepository lendingRepository)

@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\Controllers\ItemsControllerBuilder.cs" />
+    <Compile Include="Builders\Controllers\LendingControllerBuilder.cs" />
     <Compile Include="Builders\Controllers\PersonControllerBuilder.cs" />
     <Compile Include="Builders\Domain\ItemBuilder.cs" />
     <Compile Include="Builders\Domain\LendingBuilder.cs" />
