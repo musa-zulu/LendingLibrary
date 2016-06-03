@@ -1,0 +1,25 @@
+{
+  "name": "client_services",
+  "description": "client_services",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "karma": "^0.13.15",
+    "karma-chrome-launcher": "",
+    "karma-cli": "",
+    "karma-coverage": ">=0.5.3",
+    "karma-firefox-launcher": "",
+    "karma-ie-launcher": "",
+    "karma-jasmine": "",
+    "karma-junit-reporter": ">=0.3.8",
+    "karma-nested-reporter": "",
+    "karma-phantomjs-launcher": "",
+    "karma-requirejs": "^0.2.2",
+    "karma-sonarqube-unit-reporter": ">=0.0.2",
+    "karma-xml-reporter": "",
+    "requirejs": "^2.1.15"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
