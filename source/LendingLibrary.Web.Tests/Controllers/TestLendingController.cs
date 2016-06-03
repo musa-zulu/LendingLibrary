@@ -1129,96 +1129,95 @@ namespace LendingLibrary.Web.Tests.Controllers
              Assert.IsInstanceOf<LendingViewModel>(model);
          }
 
-       [Test]
-       public void Delete_GivenItemIdIsNull_ShouldReturnHttpStatusOfBadRequest()
-       {
-           //---------------Set up test pack-------------------
-           var itemsRepository = Substitute.For<IItemsRepository>();
-           var itemsControllerBuilder = CreateLendingController()
-                                       .WithItemsRepository(itemsRepository)
-                                       .Build();
-           //---------------Assert Precondition----------------
-           //---------------Execute Test ----------------------
-           var result = itemsControllerBuilder.Delete((Guid?)null) as HttpStatusCodeResult;
-           //---------------Test Result -----------------------
-           Assert.IsNotNull(result);
-           Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
-       }
+       //[Test]
+       //public void Delete_GivenItemIdIsNull_ShouldReturnHttpStatusOfBadRequest()
+       //{
+       //    //---------------Set up test pack-------------------
+       //    var itemsRepository = Substitute.For<IItemsRepository>();
+       //    var itemsControllerBuilder = CreateLendingController()
+       //                                .WithItemsRepository(itemsRepository)
+       //                                .Build();
+       //    //---------------Assert Precondition----------------
+       //    //---------------Execute Test ----------------------
+       //    var result = itemsControllerBuilder.Delete((Guid?)null) as HttpStatusCodeResult;
+       //    //---------------Test Result -----------------------
+       //    Assert.IsNotNull(result);
+       //    Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
+       //}
 
-        /*    [Test]
-           public void Delete_GivenAValidId_ShouldCallGetById()
-           {
-               //---------------Set up test pack-------------------
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               var itemsControllerBuilder = CreateItemsControllerBuilder()
-                                           .WithItemsRepository(itemsRepository)
-                                           .Build();
-               var item = ItemBuilder.BuildRandom();
-               //---------------Assert Precondition----------------
+       // /*    [Test]
+           //public void Delete_GivenAValidId_ShouldCallGetById()
+           //{
+           //    //---------------Set up test pack-------------------
+           //    var itemsRepository = Substitute.For<IItemsRepository>();
+           //    var itemsControllerBuilder = CreateItemsControllerBuilder()
+           //                                .WithItemsRepository(itemsRepository)
+           //                                .Build();
+           //    var item = ItemBuilder.BuildRandom();
+           //    //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               itemsControllerBuilder.Delete(item.ItemId);
-               //---------------Test Result -----------------------
-               itemsRepository.Received(1).GetById(item.ItemId);
-           }
+           //    //---------------Execute Test ----------------------
+           //    itemsControllerBuilder.Delete(item.ItemId);
+           //    //---------------Test Result -----------------------
+           //    itemsRepository.Received(1).GetById(item.ItemId);
+           //}
 
-           [Test]
-           public void Delete_GivenAnItemIsReturnedFromRepo_ShouldcallMappingEngine()
-           {
-               //---------------Set up test pack-------------------
-               var mappingEngine = Substitute.For<IMappingEngine>();
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               var item = ItemBuilder.BuildRandom();
-               itemsRepository.GetById(item.ItemId).Returns(item);
-               var itemsControllerBuilder = CreateItemsControllerBuilder()
-                                           .WithMappingEngine(mappingEngine)
-                                           .WithItemsRepository(itemsRepository)
-                                           .Build();
-               //---------------Assert Precondition----------------
+           //[Test]
+           //public void Delete_GivenAnItemIsReturnedFromRepo_ShouldcallMappingEngine()
+           //{
+           //    //---------------Set up test pack-------------------
+           //    var mappingEngine = Substitute.For<IMappingEngine>();
+           //    var itemsRepository = Substitute.For<IItemsRepository>();
+           //    var item = ItemBuilder.BuildRandom();
+           //    itemsRepository.GetById(item.ItemId).Returns(item);
+           //    var itemsControllerBuilder = CreateItemsControllerBuilder()
+           //                                .WithMappingEngine(mappingEngine)
+           //                                .WithItemsRepository(itemsRepository)
+           //                                .Build();
+           //    //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               itemsControllerBuilder.Delete(item.ItemId);
-               //---------------Test Result -----------------------
-               mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
-           }
+           //    //---------------Execute Test ----------------------
+           //    itemsControllerBuilder.Delete(item.ItemId);
+           //    //---------------Test Result -----------------------
+           //    mappingEngine.Received(1).Map<Item, ItemViewModel>(item);
+           //}
 
-           [Test]
-           public void Delete_GivenItemsViewModelIsNull_ShouldReturnHttpNotFound()
-           {
-               //---------------Set up test pack-------------------
-               var itemsController = CreateItemsControllerBuilder().Build();
-               //---------------Assert Precondition----------------
+           //[Test]
+           //public void Delete_GivenItemsViewModelIsNull_ShouldReturnHttpNotFound()
+           //{
+           //    //---------------Set up test pack-------------------
+           //    var itemsController = CreateItemsControllerBuilder().Build();
+           //    //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               var result = itemsController.Delete(Guid.NewGuid()) as HttpStatusCodeResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
-           }
+           //    //---------------Execute Test ----------------------
+           //    var result = itemsController.Delete(Guid.NewGuid()) as HttpStatusCodeResult;
+           //    //---------------Test Result -----------------------
+           //    Assert.IsNotNull(result);
+           //    Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+           //}
 
-           [Test]
-           public void Delete_ShouldReturnViewWithItemsViewModel()
-           {
-               //---------------Set up test pack-------------------
-               var item = new ItemBuilder().WithRandomProps().Build();
-               var mappingEngine = _container.Resolve<IMappingEngine>();
-               var itemsRepository = Substitute.For<IItemsRepository>();
-               itemsRepository.GetById(item.ItemId).Returns(item);
-               var itemsController = CreateItemsControllerBuilder()
-                   .WithItemsRepository(itemsRepository)
-                   .WithMappingEngine(mappingEngine)
-                   .Build();
-               //---------------Assert Precondition----------------
+           //[Test]
+           //public void Delete_ShouldReturnViewWithItemsViewModel()
+           //{
+           //    //---------------Set up test pack-------------------
+           //    var item = new ItemBuilder().WithRandomProps().Build();
+           //    var mappingEngine = _container.Resolve<IMappingEngine>();
+           //    var itemsRepository = Substitute.For<IItemsRepository>();
+           //    itemsRepository.GetById(item.ItemId).Returns(item);
+           //    var itemsController = CreateItemsControllerBuilder()
+           //        .WithItemsRepository(itemsRepository)
+           //        .WithMappingEngine(mappingEngine)
+           //        .Build();
+           //    //---------------Assert Precondition----------------
 
-               //---------------Execute Test ----------------------
-               var result = itemsController.Delete(item.ItemId) as ViewResult;
-               //---------------Test Result -----------------------
-               Assert.IsNotNull(result);
-               var model = result.Model;
-               Assert.IsInstanceOf<ItemViewModel>(model);
-           }
-    */
-
+           //    //---------------Execute Test ----------------------
+           //    var result = itemsController.Delete(item.ItemId) as ViewResult;
+           //    //---------------Test Result -----------------------
+           //    Assert.IsNotNull(result);
+           //    var model = result.Model;
+           //    Assert.IsInstanceOf<ItemViewModel>(model);
+           //}
+    
         [Test]
         public void DeleteConfirmed_ShouldHaveHttpPostAttribute()
         {

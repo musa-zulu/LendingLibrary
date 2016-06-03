@@ -102,32 +102,15 @@ namespace LendingLibrary.Web.Controllers
             }
             return View(lendingViewModel);
         }
-
-        public ActionResult Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var item = _lendingRepository.GetById(id);
-            var lendingItemViewModel = _mappingEngine.Map<Lending, LendingViewModel>(item);
-            if (lendingItemViewModel == null)
-            {
-                return HttpNotFound();
-            }
-            return View(lendingItemViewModel);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
+        
+        public JsonResult Delete(Guid id = default(Guid))
         {
             if (id != Guid.Empty)
             {
-                var item = _lendingRepository.GetById(id);
-                _lendingRepository.DeleteLending(item);
+                var lending = _lendingRepository.GetById(id);
+                _lendingRepository.DeleteLending(lending);
             }
-            return RedirectToAction("Index");
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         private SelectList GetPersonSelectList(LendingViewModel viewModel)
@@ -170,6 +153,5 @@ namespace LendingLibrary.Web.Controllers
                 lending.PersonName = person.FirstName;
             }
         }
-
     }
 }

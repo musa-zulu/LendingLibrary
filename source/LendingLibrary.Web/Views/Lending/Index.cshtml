@@ -27,36 +27,47 @@
         <th>
             @Html.DisplayNameFor(model => model.DateReturned)
         </th>
-        
-       
+
+
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
+    @foreach (var lending in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ItemName)
+                @Html.DisplayFor(modelItem => lending.ItemName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonName)
+                @Html.DisplayFor(modelItem => lending.PersonName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DaysLentOut)
+                @Html.DisplayFor(modelItem => lending.DaysLentOut)
             </td>
-           
+
             <td>
-                @Html.DisplayFor(modelItem => item.DateBorrowed)
+                @Html.DisplayFor(modelItem => lending.DateBorrowed)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateReturned)
+                @Html.DisplayFor(modelItem => lending.DateReturned)
             </td>
-           
+
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @Html.ActionLink("Edit", "Edit", new { id = lending.Id }) |
+                <button title="Delete" onclick="deleteLending('@lending.Id')"></button>
             </td>
         </tr>
     }
 
 </table>
+
+@section scripts
+{
+    <script>
+        function deleteLending(lendingId) {
+            var deleteUrl = '@Url.Action("Delete", "Lending")';
+            var redirectUrl = '@Url.Action("Index")';
+            LendingLibrary.Web.Lending.Delete.deleteLendingEntry(lendingId, deleteUrl, redirectUrl);
+        }
+    </script>
+}

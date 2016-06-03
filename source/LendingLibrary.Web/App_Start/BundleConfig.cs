@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Optimization;
+using System.Web.UI.WebControls;
 
 namespace LendingLibrary.Web
 {
@@ -23,8 +24,15 @@ namespace LendingLibrary.Web
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/addonScripts")
+                .Include("~/Scripts/sweetalert.min.js"));
+
+           bundles.Add(new ScriptBundle("~/bundles/clientLogic")
+                .IncludeDirectory("~/js", "*.js", true));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/sweetalert.css",
                       "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include("~/Scripts/jquery-ui-{version}.js"));

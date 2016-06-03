@@ -43,6 +43,9 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/addonScripts")
+    @Scripts.Render("~/bundles/clientLogic")
+
     <script>
         $(function () {
             $(".jqueryui-marker-datepicker").datepicker({
@@ -51,11 +54,11 @@
                 showOn: "button",
                 buttonImage: "/Content/images/cal.png"
             }).css("display", "inline-block")
-                .next("button".button({
+                .next("button").button ({
                     icons: { primary: "ui-icon-calendar" },
                     label: "Select a date",
                     text: false
-                }));
+                });
         });      
     </script>
     @RenderSection("scripts", required: false)
