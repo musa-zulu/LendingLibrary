@@ -17,9 +17,7 @@ LendingLibrary.Web.Lending.Delete = LendingLibrary.Web.Lending.Delete || {};
            },
            function (isConfirm) {
                if (isConfirm) {
-                   $.post(deleteUrl, { lendingId: lendingId }).then(function (response) {
-                       alert(isConfirm + " " + lendingId);
-                       console.log("Lending ID : " + lendingId);
+                   $.post(deleteUrl, { newlendingId: newlendingId }).then(function (response) {
                        sweetAlert({
                            title: "Lending entry deleted successfully",
                            text: "",
@@ -30,6 +28,7 @@ LendingLibrary.Web.Lending.Delete = LendingLibrary.Web.Lending.Delete || {};
                                $.redirect(redirectUrl, { lendingId: lendingId });
                            });
                    }).fail(function (result) {
+                       alert(isConfirm + " " + lendingId);
                        sweetAlert({
                            title: "Error: " + result.statusText,
                            text: "",

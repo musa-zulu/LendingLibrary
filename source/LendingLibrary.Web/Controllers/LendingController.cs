@@ -103,7 +103,7 @@ namespace LendingLibrary.Web.Controllers
             return View(lendingViewModel);
         }
         
-        public JsonResult Delete(Guid id = default(Guid))
+        public JsonResult Delete(Guid id)
         {
             if (id != Guid.Empty)
             {
