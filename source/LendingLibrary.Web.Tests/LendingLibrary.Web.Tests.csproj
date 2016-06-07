@@ -167,6 +167,8 @@
   <ItemGroup>
     <Content Include="GenericBuilderTests-ExampleUsage.cs.txt" />
     <Content Include="js\Lending\delete.specs.js" />
+    <Content Include="js\Person\delete.specs.js" />
+    <Content Include="js\Person\edit.specs.js" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
