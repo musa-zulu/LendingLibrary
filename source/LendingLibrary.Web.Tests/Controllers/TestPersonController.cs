@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Web.Mvc;
@@ -280,7 +280,7 @@ namespace LendingLibrary.Web.Tests.Controllers
         }
 
         [Test]
-        public void Edit_GivenIdIsNull_ShouldReturnReturnBadRequest()
+        public void Edit_GivenIdIsNull_ShouldReturnJsonResult()
         {
             //---------------Set up test pack-------------------
             var personRepository = Substitute.For<IPersonRepository>();
@@ -291,10 +291,10 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = personController.Edit(Guid.Empty) as HttpStatusCodeResult;
+            var jsonResult = personController.Edit(Guid.Empty);
             //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.IsNotNull(jsonResult);
+            Assert.AreEqual(JsonRequestBehavior.AllowGet, jsonResult.Data);
         }
 
         [Test]
@@ -313,23 +313,6 @@ namespace LendingLibrary.Web.Tests.Controllers
             var result = personController.Edit(id);
             //---------------Test Result -----------------------
             personRepository.Received().GetById(id);
-        }
-
-        [Test]
-        public void Edit_GivenPersonViewModelIsNull_ShouldReturnHttpNotFoundStatus()
-        {
-            //---------------Set up test pack-------------------
-            var personRepository = Substitute.For<IPersonRepository>();
-            var personController = CreatePersonController()
-               .WithPersonRepository(personRepository)
-               .Build();
-            //---------------Assert Precondition----------------
-
-            //---------------Execute Test ----------------------
-            var result = personController.Edit((Guid?)null) as HttpStatusCodeResult;
-            //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
         }
 
         [Test]
@@ -355,13 +338,13 @@ namespace LendingLibrary.Web.Tests.Controllers
         }
 
         [Test]
-        public void Edit_ShouldReturnViewWithPersonViewModel()
+        public void Edit_ShouldReturnJsonResultWithPersonViewModel()
         {
             //---------------Set up test pack-------------------
-            var person = new PersonViewModelBuilder().WithRandomProps().Build();
+            var person = new PersonBuilder().WithRandomProps().Build();
             var personRepository = Substitute.For<IPersonRepository>();
             var mappingEngine = _container.Resolve<IMappingEngine>();
-            personRepository.GetById(person.Id).Returns(PersonBuilder.BuildDefault());
+            personRepository.GetById(person.PersonId).Returns(person);
             var personController = CreatePersonController()
                .WithPersonRepository(personRepository)
                .WithMappingEngine(mappingEngine)
@@ -370,10 +353,17 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Assert Precondition----------------
 
             //---------------Execute Test ----------------------
-            var result = personController.Edit(person.Id);
+            var jsonResult = personController.Edit(person.PersonId);
             //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<PersonViewModel>(person);
+            Assert.IsNotNull(jsonResult);
+            var data = jsonResult.Get<PersonViewModel>("personViewModel");
+            Assert.IsNotNull(data);
+            Assert.AreEqual(person.PersonId, data.Id);
+            Assert.AreEqual(person.FirstName, data.FirstName);
+            Assert.AreEqual(person.LastName, data.LastName);
+            Assert.AreEqual(person.Email, data.Email);
+            Assert.AreEqual(person.PhoneNumber, data.PhoneNumber);
+            Assert.AreEqual(person.Title, data.Title);
         }
 
         [Test]
@@ -387,19 +377,6 @@ namespace LendingLibrary.Web.Tests.Controllers
             var httpPostAttribute = methodInfo.GetCustomAttribute<HttpPostAttribute>();
             //---------------Test Result -----------------------
             Assert.NotNull(httpPostAttribute);
-        }
-
-        [Test]
-        public void Edit_POST_ShouldHaveValidateAntiForgeryTokenAttribute()
-        {
-            //---------------Set up test pack-------------------
-            var methodInfo = typeof(PersonController).GetMethod("Edit", new[] { typeof(PersonViewModel) });
-            //---------------Assert Precondition----------------
-            Assert.IsNotNull(methodInfo);
-            //---------------Execute Test ----------------------
-            var antiForgeryAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
-            //---------------Test Result -----------------------
-            Assert.NotNull(antiForgeryAttribute);
         }
 
         [Test]
@@ -505,99 +482,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.RouteValues["Action"]);
         }
-
-        [Test]
-        public void Delete_GivenInvalidId_ShouldReturnHttpStatusCodeBadRequest()
-        {
-            //---------------Set up test pack-------------------
-            var personController = CreatePersonController().Build();
-            //---------------Assert Precondition----------------
-
-            //---------------Execute Test ----------------------
-            var result = personController.Delete((Guid?)null) as HttpStatusCodeResult;
-            //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.BadRequest, result.StatusCode);
-        }
-
-        [Test]
-        public void Delete_GivenValidId_ShouldCallGetByIdFromOrderId()
-        {
-            //---------------Set up test pack-------------------
-            var personId = Guid.NewGuid();
-            var personRepository = Substitute.For<IPersonRepository>();
-            var personController = CreatePersonController()
-                .WithPersonRepository(personRepository)
-                .Build();
-
-            //---------------Assert Precondition----------------
-
-            //---------------Execute Test ----------------------
-            var result = personController.Delete(personId) as HttpStatusCodeResult;
-            //---------------Test Result -----------------------
-            personRepository.Received().GetById(personId);
-        }
-
-        [Test]
-        public void Delete_GivenValidPerson_ShouldCallMappingEngine()
-        {
-            //---------------Set up test pack-------------------
-            var person = PersonBuilder.BuildRandom();
-            var personId = person.PersonId;
-            var mappingEngine = Substitute.For<IMappingEngine>();
-            var personRepository = Substitute.For<IPersonRepository>();
-            personRepository.GetById(personId).Returns(person);
-            var personController = CreatePersonController()
-                .WithPersonRepository(personRepository)
-                .WithMappingEngine(mappingEngine)
-                .Build();
-
-            //---------------Assert Precondition----------------
-
-            //---------------Execute Test ----------------------
-            var result = personController.Delete(personId) as HttpStatusCodeResult;
-            //---------------Test Result -----------------------
-            mappingEngine.Received().Map<Person, PersonViewModel>(person);
-        }
-
-        [Test]
-        public void Delete_GivenPersonViewModelIsNull_ShouldReturnHttpNotFoundStatus()
-        {
-            //---------------Set up test pack-------------------
-            var personId = Guid.NewGuid();
-            var personController = CreatePersonController().Build();
-            //---------------Assert Precondition----------------
-
-            //---------------Execute Test ----------------------
-            var result = personController.Delete(personId) as HttpStatusCodeResult;
-            //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
-        }
-
-        [Test]
-        public void Delete_ShouldReturnViewWithPersonViewModel()
-        {
-            //---------------Set up test pack-------------------.
-            var person = PersonBuilder.BuildRandom();
-            var personId = person.PersonId;
-            var mappingEngine = _container.Resolve<IMappingEngine>();
-            var personRepository = Substitute.For<IPersonRepository>();
-            personRepository.GetById(personId).Returns(person);
-            var personController = CreatePersonController()
-                .WithMappingEngine(mappingEngine)
-                .WithPersonRepository(personRepository)
-                .Build();
-            //---------------Assert Precondition----------------
-
-            //---------------Execute Test ----------------------
-            var result = personController.Delete(personId) as ViewResult;
-            //---------------Test Result -----------------------
-            Assert.IsNotNull(result);
-            var model = result.Model;
-            Assert.IsInstanceOf<PersonViewModel>(model);
-        }
-
+        
         [Test]
         public void DeleteConfirmed_ShouldHaveHttpPostAttribute()
         {
@@ -640,7 +525,7 @@ namespace LendingLibrary.Web.Tests.Controllers
             //---------------Test Result -----------------------
             personRepository.Received().GetById(id);
         }
-        
+
         [Test]
         public void DeleteConfirmed_GivenPersonIsReturnedFromRepo_ShouldCallDeletePerson()
         {
@@ -657,6 +542,19 @@ namespace LendingLibrary.Web.Tests.Controllers
             var result = controller.DeleteConfirmed(person.PersonId);
             //---------------Test Result -----------------------
             personRepository.Received().DeletePerson(person);
+        }
+
+        [Test]
+        public void DeleteConfirmed_GivenPersonIdIsNull_ShouldReturnJsonResult()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreatePersonController().Build();  
+            //---------------Assert Precondition----------------
+
+            //---------------Execute Test ----------------------
+            var result = controller.DeleteConfirmed(Guid.Empty);
+            //---------------Test Result -----------------------
+            Assert.IsNotNull(result);
         }
 
         private static PersonControllerBuilder CreatePersonController()

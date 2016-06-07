@@ -21,33 +21,57 @@
         <th>
             @Html.DisplayNameFor(model => model.Email)
         </th>
-       <th>
+        <th>
             @Html.DisplayNameFor(model => model.PhoneNumber)
         </th>
-      
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhoneNumber)
-        </td>
-  
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var person in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => person.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => person.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => person.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => person.PhoneNumber)
+            </td>
+
+            <td>
+                <a class="btn btn-info" onclick="editPerson('@person.Id')">
+                    <i class="fa fa-pencil" title="Edit" aria-hidden="true"></i>
+                    <span class="sr-only">Edit</span>
+                </a> |
+                <a class="btn btn-danger" onclick="deletePerson('@person.Id')">
+                    <i class="fa fa-trash-o" title="Delete" aria-hidden="true"></i>
+                    <span class="sr-only">Delete</span>
+                </a>
+            </td>
+        </tr>
+    }
 
 </table>
+
+@section scripts {
+    <script>
+        function editPerson(personId) {
+            var editUrl = '@Url.Action("Edit", "Person")';
+            var redirectUrl = '@Url.Action("Edit")';
+            LendingLibrary.Web.Person.Edit.editPersonEntry(personId, editUrl, redirectUrl);
+        }
+
+        function deletePerson(personId) {
+            var editUrl = '@Url.Action("Delete", "Person")';
+            var redirectUrl = '@Url.Action("Edit")';
+            LendingLibrary.Web.Person.Delete.deletePerson(personId, editUrl, redirectUrl);
+        }
+    </script>
+}
+

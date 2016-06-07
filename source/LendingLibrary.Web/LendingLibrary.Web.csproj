@@ -205,7 +205,8 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="js\Lending\delete.js" />
-    <Content Include="js\Lending\edit.js" />
+    <Content Include="js\Person\delete.js" />
+    <Content Include="js\Person\edit.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="fonts\FontAwesome.otf" />

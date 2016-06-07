@@ -67,26 +67,23 @@ namespace LendingLibrary.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public JsonResult Edit(Guid? id)
+        public ActionResult Edit(Guid? id)
         {
-            //if (id == Guid.Empty)
-            //{
-            //    return Json(false, JsonRequestBehavior.DenyGet);
-            //    //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
+            if (id == Guid.Empty)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             var item = _lendingRepository.GetById(id);
             var lendingItemViewModel = _mappingEngine.Map<Lending, LendingViewModel>(item);
             if (lendingItemViewModel == null)
             {
-                return Json(false, JsonRequestBehavior.DenyGet);
-                //return HttpNotFound();
+                return HttpNotFound();
             }
             var people = GetPersonSelectList(lendingItemViewModel);
             var items = GetItemsSelectList(lendingItemViewModel);
             lendingItemViewModel.PeopleSelectList = people;
             lendingItemViewModel.ItemsSelectList = items;
-            return Json(true, JsonRequestBehavior.AllowGet);
-            // return View(lendingItemViewModel);
+            return View(lendingItemViewModel);
         }
 
         [HttpPost]

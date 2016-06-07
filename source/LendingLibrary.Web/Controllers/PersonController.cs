@@ -46,23 +46,15 @@ namespace LendingLibrary.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Edit(Guid? id)
+        public JsonResult Edit(Guid? id)
         {
-            if (id == Guid.Empty)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == Guid.Empty) return Json(JsonRequestBehavior.AllowGet);
             var person = _personRepository.GetById(id);
             var personViewModel = _mappingEngine.Map<Person, PersonViewModel>(person);
-            if (personViewModel == null)
-            {
-                return HttpNotFound();
-            }
-            return View(personViewModel);
+            return Json(new { personViewModel }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit(PersonViewModel personViewModel)
         {
             if (ModelState.IsValid)
@@ -75,30 +67,16 @@ namespace LendingLibrary.Web.Controllers
             }
             return View(personViewModel);
         }
-
-        public ActionResult Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var person = _personRepository.GetById(id);
-            var personViewModel = _mappingEngine.Map<Person, PersonViewModel>(person);
-            if (personViewModel == null)
-            {
-                return HttpNotFound();
-            }
-            return View(personViewModel);
-        }
-
-        // POST: Person/Delete/5
+        
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
+        public JsonResult DeleteConfirmed(Guid id)
         {
-            var person = _personRepository.GetById(id);
-            _personRepository.DeletePerson(person);
-            return RedirectToAction("Index");
+            if (id != Guid.Empty)
+            {
+                var person = _personRepository.GetById(id);
+                _personRepository.DeletePerson(person);
+            }
+            return Json(JsonRequestBehavior.AllowGet);
         }
     }
 }

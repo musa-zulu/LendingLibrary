@@ -1,14 +1,13 @@
 ﻿var LendingLibrary = LendingLibrary || {};
 LendingLibrary.Web = LendingLibrary.Web || {};
-LendingLibrary.Web.Lending = LendingLibrary.Web.Lending || {};
-LendingLibrary.Web.Lending.Edit = LendingLibrary.Web.Lending.Edit || {};
+LendingLibrary.Web.Person = LendingLibrary.Web.Person || {};
+LendingLibrary.Web.Person.Edit = LendingLibrary.Web.Person.Edit || {};
 
 (function (ns) {
-    ns.editLendingEntry = function (lendingId, editUrl, redirectUrl) {
-
-        $.post(editUrl, { id: lendingId })
+    ns.editPersonEntry = function (personId, editUrl, redirectUrl) {
+        $.get(editUrl, { id: personId })
             .then(function (response) {
-                $.redirect(redirectUrl);
+                $.redirect(redirectUrl, response);
             })
             .fail(function (result) {
                 sweetAlert({
@@ -19,4 +18,4 @@ LendingLibrary.Web.Lending.Edit = LendingLibrary.Web.Lending.Edit || {};
                 });
             });
     };
-})(LendingLibrary.Web.Lending.Edit);
+})(LendingLibrary.Web.Person.Edit);
