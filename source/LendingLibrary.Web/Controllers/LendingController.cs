@@ -32,7 +32,7 @@ namespace LendingLibrary.Web.Controllers
             _personRepository = personRepository;
             _itemsRepository = itemsRepository;
         }
-        
+
         public ActionResult Index()
         {
             var viewModel = new List<LendingViewModel>();
@@ -41,7 +41,7 @@ namespace LendingLibrary.Web.Controllers
             {
                 viewModel = _mappingEngine.Map<List<Lending>, List<LendingViewModel>>(lendings);
             }
-            
+
             return View(viewModel);
         }
 
@@ -67,23 +67,26 @@ namespace LendingLibrary.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Edit(Guid? id)
+        public JsonResult Edit(Guid? id)
         {
-            if (id == Guid.Empty)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            //if (id == Guid.Empty)
+            //{
+            //    return Json(false, JsonRequestBehavior.DenyGet);
+            //    //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
             var item = _lendingRepository.GetById(id);
             var lendingItemViewModel = _mappingEngine.Map<Lending, LendingViewModel>(item);
             if (lendingItemViewModel == null)
             {
-                return HttpNotFound();
+                return Json(false, JsonRequestBehavior.DenyGet);
+                //return HttpNotFound();
             }
             var people = GetPersonSelectList(lendingItemViewModel);
             var items = GetItemsSelectList(lendingItemViewModel);
             lendingItemViewModel.PeopleSelectList = people;
             lendingItemViewModel.ItemsSelectList = items;
-            return View(lendingItemViewModel);
+            return Json(true, JsonRequestBehavior.AllowGet);
+            // return View(lendingItemViewModel);
         }
 
         [HttpPost]
@@ -102,8 +105,8 @@ namespace LendingLibrary.Web.Controllers
             }
             return View(lendingViewModel);
         }
-        
-        public JsonResult Delete(Guid id)
+
+        public JsonResult Delete(Guid? id)
         {
             if (id != Guid.Empty)
             {
@@ -137,7 +140,7 @@ namespace LendingLibrary.Web.Controllers
             });
             return new SelectList(listItems, "Value", "Text", viewModel.ItemId);
         }
-       
+
         private void SetItemOn(LendingViewModel viewModel, Lending lending)
         {
             if (viewModel.ItemId == Guid.Empty) return;

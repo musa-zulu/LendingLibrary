@@ -2,7 +2,7 @@
 LendingLibrary.Web = LendingLibrary.Web || {};
 LendingLibrary.Web.Lending = LendingLibrary.Web.Lending || {};
 LendingLibrary.Web.Lending.Delete = LendingLibrary.Web.Lending.Delete || {};
-(function(ns) {
+(function (ns) {
     ns.deleteLendingEntry = function (lendingId, deleteUrl, redirectUrl) {
         sweetAlert(
            {
@@ -17,7 +17,7 @@ LendingLibrary.Web.Lending.Delete = LendingLibrary.Web.Lending.Delete || {};
            },
            function (isConfirm) {
                if (isConfirm) {
-                   $.post(deleteUrl, { newlendingId: newlendingId }).then(function (response) {
+                   $.post(deleteUrl, {id: lendingId}).then(function () {
                        sweetAlert({
                            title: "Lending entry deleted successfully",
                            text: "",
@@ -25,10 +25,9 @@ LendingLibrary.Web.Lending.Delete = LendingLibrary.Web.Lending.Delete || {};
                            confirmButtonColor: "#7CB43F"
                        },
                            function () {
-                               $.redirect(redirectUrl, { lendingId: lendingId });
+                               $.redirect(redirectUrl);
                            });
                    }).fail(function (result) {
-                       alert(isConfirm + " " + lendingId);
                        sweetAlert({
                            title: "Error: " + result.statusText,
                            text: "",

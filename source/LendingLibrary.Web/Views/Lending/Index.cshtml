@@ -53,12 +53,17 @@
             </td>
 
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = lending.Id }) |
-                <button title="Delete" onclick="deleteLending('@lending.Id')"></button>
+                <a class="btn btn-info" onclick="editLending('@lending.Id')">
+                    <i class="fa fa-pencil" title="Edit" aria-hidden="true"></i>
+                    <span class="sr-only">Edit</span>
+                </a> |
+                <a class="btn btn-danger" onclick="deleteLending('@lending.Id')">
+                    <i class="fa fa-trash-o" title="Delete" aria-hidden="true"></i>
+                    <span class="sr-only">Delete</span>
+                </a>
             </td>
         </tr>
     }
-
 </table>
 
 @section scripts
@@ -68,6 +73,12 @@
             var deleteUrl = '@Url.Action("Delete", "Lending")';
             var redirectUrl = '@Url.Action("Index")';
             LendingLibrary.Web.Lending.Delete.deleteLendingEntry(lendingId, deleteUrl, redirectUrl);
+        }
+
+        function editLending(lendingId) {
+            var editUrl = '@Url.Action("Edit", "Lending")';
+            var redirectUrl = '@Url.Action("Edit", "Lending")';
+            LendingLibrary.Web.Lending.Edit.editLendingEntry(lendingId, editUrl, redirectUrl);
         }
     </script>
 }

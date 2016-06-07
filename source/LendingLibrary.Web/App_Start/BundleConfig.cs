@@ -25,15 +25,17 @@ namespace LendingLibrary.Web
                       "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/addonScripts")
-                .Include("~/Scripts/sweetalert.min.js"));
+                .Include("~/Scripts/sweetalert.min.js",
+                "~/Scripts/jquery.redirect.js"));
 
-           bundles.Add(new ScriptBundle("~/bundles/clientLogic")
-                .IncludeDirectory("~/js", "*.js", true));
+            bundles.Add(new ScriptBundle("~/bundles/clientLogic")
+                 .IncludeDirectory("~/js", "*.js", true));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/sweetalert.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/font-awesome.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include("~/Scripts/jquery-ui-{version}.js"));
             bundles.Add(new StyleBundle("~/Content/jqueryui").Include("~/Content/themes/base/all.css"));
