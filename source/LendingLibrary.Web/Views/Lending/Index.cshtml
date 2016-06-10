@@ -77,7 +77,7 @@
 
         function editLending(lendingId) {
             var editUrl = '@Url.Action("Edit", "Lending")';
-            var redirectUrl = '@Url.Action("Edit", "Lending")';
+            var redirectUrl = '@Url.Action("Edit")';
             LendingLibrary.Web.Lending.Edit.editLendingEntry(lendingId, editUrl, redirectUrl);
         }
     </script>

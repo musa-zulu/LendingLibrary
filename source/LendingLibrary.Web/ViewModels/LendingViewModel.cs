@@ -15,7 +15,7 @@ namespace LendingLibrary.Web.ViewModels
         public string ItemName { get; set; }
         public Guid ItemId { get; set; }
         [Required]
-        [Display(Name="Date Borrowed")]
+        [Display(Name = "Date Borrowed")]
         public DateTime? DateBorrowed { get; set; }
         [Required]
         [Display(Name = "Return Date")]
@@ -28,7 +28,7 @@ namespace LendingLibrary.Web.ViewModels
         {
             get
             {
-                if (DateBorrowed != null && DateReturned != null) 
+                if (DateBorrowed != null && DateReturned != null)
                     return DateReturned.Value.Day - DateBorrowed.Value.Day;
                 return 0;
             }
@@ -38,10 +38,16 @@ namespace LendingLibrary.Web.ViewModels
         {
             get
             {
-                if(DaysLentOut > 0)
+                if (DaysLentOut > 0)
                     return LendingStatus.NotAvailable;
                 return LendingStatus.Available;
             }
+        }
+
+        public LendingViewModel()
+        {
+            PeopleSelectList = new SelectList("Value", "Text");
+            ItemsSelectList = new SelectList("Value", "Text");
         }
     }
 }

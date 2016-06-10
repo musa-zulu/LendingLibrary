@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Web.Mvc;
 using AutoMapper;
 using Castle.Windsor;
+using LendingLibrary.Core;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
 using LendingLibrary.Tests.Common.Builders.Controllers;
@@ -104,6 +105,34 @@ namespace LendingLibrary.Web.Tests.Controllers
             var ex = Assert.Throws<ArgumentNullException>(() => new LendingController(Substitute.For<ILendingRepository>(), Substitute.For<IMappingEngine>(), null, Substitute.For<IItemsRepository>()));
             //---------------Test Result -----------------------
             Assert.AreEqual("personRepository", ex.ParamName);
+        }
+
+        [Test]
+        public void DateTimeProvider_GivenSetDateTimeProvider_ShouldSetDateTimeProviderOnFirstCall()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreateLendingController().Build();
+            var dateTimeProvider = Substitute.For<IDateTimeProvider>();
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            controller.DateTimeProvider = dateTimeProvider;
+            //---------------Test Result -----------------------
+            Assert.AreSame(dateTimeProvider, controller.DateTimeProvider);
+        }
+
+        [Test]
+        public void DateTimeProvider_GivenSetDateTimeProviderIsSet_ShouldThrowOnCall()
+        {
+            //---------------Set up test pack-------------------
+            var controller = CreateLendingController().Build();
+            var dateTimeProvider = Substitute.For<IDateTimeProvider>();
+            var dateTimeProvider1 = Substitute.For<IDateTimeProvider>();
+            controller.DateTimeProvider = dateTimeProvider;
+            //---------------Assert Precondition----------------
+            //---------------Execute Test ----------------------
+            var ex = Assert.Throws<InvalidOperationException>(() => controller.DateTimeProvider = dateTimeProvider1);
+            //---------------Test Result -----------------------
+            Assert.AreEqual("DateTimeProvider is already set", ex.Message);
         }
 
         [Test]
@@ -891,18 +920,18 @@ namespace LendingLibrary.Web.Tests.Controllers
             Assert.NotNull(httpPostAttribute);
         }
 
-        [Test]
-        public void Edit_POST_ShouldHaveValidateAntiForgeryTokenAttribute()
-        {
-            //---------------Set up test pack-------------------
-            var methodInfo = typeof(LendingController).GetMethod("Edit", new[] { typeof(LendingViewModel) });
-            //---------------Assert Precondition----------------
-            Assert.IsNotNull(methodInfo);
-            //---------------Execute Test ----------------------
-            var antiForgeryAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
-            //---------------Test Result -----------------------
-            Assert.NotNull(antiForgeryAttribute);
-        }
+        //[Test]
+        //public void Edit_POST_ShouldHaveValidateAntiForgeryTokenAttribute()
+        //{
+        //    //---------------Set up test pack-------------------
+        //    var methodInfo = typeof(LendingController).GetMethod("Edit", new[] { typeof(LendingViewModel) });
+        //    //---------------Assert Precondition----------------
+        //    Assert.IsNotNull(methodInfo);
+        //    //---------------Execute Test ----------------------
+        //    var antiForgeryAttribute = methodInfo.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>();
+        //    //---------------Test Result -----------------------
+        //    Assert.NotNull(antiForgeryAttribute);
+        //}
 
         [Test]
         public void Edit_POST_GivenModelStateIsValid_ShouldCallGetByIdFromLendingsRepo()

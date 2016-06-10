@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
+using LendingLibrary.Core;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
 using LendingLibrary.Web.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace LendingLibrary.Web.Controllers
 {
@@ -13,13 +15,23 @@ namespace LendingLibrary.Web.Controllers
     {
         private readonly IItemsRepository _itemsRepository;
         private readonly IMappingEngine _mappingEngine;
-
+        private IDateTimeProvider _dateTimeProvider;
         public ItemsController(IItemsRepository itemsRepository, IMappingEngine mappingEngine)
         {
             if (itemsRepository == null) throw new ArgumentNullException(nameof(itemsRepository));
             if (mappingEngine == null) throw new ArgumentNullException(nameof(mappingEngine));
             _itemsRepository = itemsRepository;
             _mappingEngine = mappingEngine;
+        }
+
+        public IDateTimeProvider DateTimeProvider 
+        {
+            get { return _dateTimeProvider ?? (_dateTimeProvider = new DefaultDateTimeProvider()); }
+            set
+            {
+                if (_dateTimeProvider != null) throw new InvalidOperationException("DateTimeProvider is already set");
+                _dateTimeProvider = value;
+            }
         }
 
         public ActionResult Index()
@@ -41,6 +53,7 @@ namespace LendingLibrary.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                SetBaseFieldsOn(itemViewModel);
                 var item = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
                 _itemsRepository.Save(item);
                 return RedirectToAction("Index", "Items");
@@ -69,6 +82,7 @@ namespace LendingLibrary.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                UpdateBaseFieldOn(itemViewModel);
                 var existingItem = _itemsRepository.GetById(itemViewModel.Id);
                 var newItem = _mappingEngine.Map<ItemViewModel, Item>(itemViewModel);
                 _itemsRepository.Update(existingItem, newItem);
@@ -103,6 +117,29 @@ namespace LendingLibrary.Web.Controllers
                 _itemsRepository.DeleteItem(item);
             }
             return RedirectToAction("Index");
+        }
+
+        //test this
+        private void SetBaseFieldsOn(ItemViewModel itemViewModel)
+        {
+            itemViewModel.CreatedUsername = GetUserName();
+            itemViewModel.LastModifiedUsername = GetUserName();
+            itemViewModel.DateCreated = DateTimeProvider.Now;
+            itemViewModel.DateLastModified = DateTimeProvider.Now;
+        }
+
+        private void UpdateBaseFieldOn(ItemViewModel itemViewModel)
+        {
+            itemViewModel.DateLastModified = DateTimeProvider.Now;
+            itemViewModel.LastModifiedUsername = GetUserName();
+        }
+
+        private string GetUserName()
+        {
+            var username = "";
+            if (User?.Identity != null)
+                username = User.Identity.GetUserName();
+            return username;
         }
     }
 }

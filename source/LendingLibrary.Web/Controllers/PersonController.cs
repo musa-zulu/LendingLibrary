@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
 using LendingLibrary.Core.Domain;

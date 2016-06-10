@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
+using LendingLibrary.Core;
 using LendingLibrary.Core.Domain;
 using LendingLibrary.Core.Interfaces.Repositories;
 using LendingLibrary.Web.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace LendingLibrary.Web.Controllers
 {
@@ -16,6 +17,7 @@ namespace LendingLibrary.Web.Controllers
         private readonly ILendingRepository _lendingRepository;
         private readonly IPersonRepository _personRepository;
         private readonly IItemsRepository _itemsRepository;
+        private IDateTimeProvider _dateTimeProvider;
 
         public LendingController(ILendingRepository lendingRepository)
         {
@@ -28,9 +30,19 @@ namespace LendingLibrary.Web.Controllers
             if (mappingEngine == null) throw new ArgumentNullException(nameof(mappingEngine));
             if (personRepository == null) throw new ArgumentNullException(nameof(personRepository));
             if (itemsRepository == null) throw new ArgumentNullException(nameof(itemsRepository));
-            this._mappingEngine = mappingEngine;
+            _mappingEngine = mappingEngine;
             _personRepository = personRepository;
             _itemsRepository = itemsRepository;
+        }
+
+        public IDateTimeProvider DateTimeProvider
+        {
+            get { return _dateTimeProvider ?? (_dateTimeProvider = new DefaultDateTimeProvider()); }
+            set
+            {
+                if (_dateTimeProvider != null) throw new InvalidOperationException("DateTimeProvider is already set");
+                _dateTimeProvider = value;
+            }
         }
 
         public ActionResult Index()
@@ -47,11 +59,9 @@ namespace LendingLibrary.Web.Controllers
 
         public ActionResult Create()
         {
+            var username = GetUserName();
             var lendingViewModel = new LendingViewModel();
-            var people = GetPersonSelectList(lendingViewModel);
-            var items = GetItemsSelectList(lendingViewModel);
-            lendingViewModel.PeopleSelectList = people;
-            lendingViewModel.ItemsSelectList = items;
+            SetBaseFieldsOn(lendingViewModel, username);
             return View(lendingViewModel);
         }
 
@@ -67,32 +77,30 @@ namespace LendingLibrary.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Edit(Guid? id)
+        public JsonResult Edit(Guid? id)
         {
             if (id == Guid.Empty)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return Json(JsonRequestBehavior.AllowGet);
             }
             var item = _lendingRepository.GetById(id);
-            var lendingItemViewModel = _mappingEngine.Map<Lending, LendingViewModel>(item);
-            if (lendingItemViewModel == null)
+            var lendingViewModel = _mappingEngine.Map<Lending, LendingViewModel>(item);
+            if (lendingViewModel == null)
             {
-                return HttpNotFound();
+                return Json(JsonRequestBehavior.AllowGet);
             }
-            var people = GetPersonSelectList(lendingItemViewModel);
-            var items = GetItemsSelectList(lendingItemViewModel);
-            lendingItemViewModel.PeopleSelectList = people;
-            lendingItemViewModel.ItemsSelectList = items;
-            return View(lendingItemViewModel);
+            lendingViewModel.PeopleSelectList = GetPersonSelectList(lendingViewModel);
+            lendingViewModel.ItemsSelectList = GetItemsSelectList(lendingViewModel);
+            return Json(new { lendingViewModel }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Edit(LendingViewModel lendingViewModel)
         {
             if (ModelState.IsValid)
             {
                 var existingItem = _lendingRepository.GetById(lendingViewModel.Id);
+                UpdateBaseFieldsOn(lendingViewModel);
                 var newItem = _mappingEngine.Map<LendingViewModel, Lending>(lendingViewModel);
                 SetItemOn(lendingViewModel, newItem);
                 SetPersonOn(lendingViewModel, newItem);
@@ -111,6 +119,30 @@ namespace LendingLibrary.Web.Controllers
                 _lendingRepository.DeleteLending(lending);
             }
             return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+        private void SetBaseFieldsOn(LendingViewModel lendingViewModel, string username)
+        {
+            lendingViewModel.PeopleSelectList = GetPersonSelectList(lendingViewModel);
+            lendingViewModel.ItemsSelectList = GetItemsSelectList(lendingViewModel);
+            lendingViewModel.CreatedUsername = username;
+            lendingViewModel.DateCreated = DateTimeProvider.Now;
+            lendingViewModel.LastModifiedUsername = username;
+            lendingViewModel.DateLastModified = DateTimeProvider.Now;
+        }
+
+        private void UpdateBaseFieldsOn(LendingViewModel lendingViewModel)
+        {
+            lendingViewModel.DateLastModified = DateTimeProvider.Now;
+            lendingViewModel.LastModifiedUsername = GetUserName();
+        }
+
+        private string GetUserName()
+        {
+            var username = "";
+            if (User?.Identity != null)
+                username = User.Identity.GetUserName();
+            return username;
         }
 
         private SelectList GetPersonSelectList(LendingViewModel viewModel)
