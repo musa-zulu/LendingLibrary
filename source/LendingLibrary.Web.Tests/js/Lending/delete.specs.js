@@ -36,5 +36,19 @@
             // assert
             expect(window.sweetAlert).toHaveBeenCalled();
         });
+        //it('should call $.redirect with given url and parameters given a successful call to $.post', function () {
+        //    // arrange
+        //    var lendingId = 1;
+        //    var deleteUrl = '/foo/bar';
+        //    var redirectUrl = '/bar/the/foo';
+        //    var deferred = $.Deferred();
+        //    spyOn($, 'post').and.returnValue(deferred);
+        //    spyOn($, 'redirect');
+        //    // act
+        //    LendingLibrary.Web.Lending.Delete.deleteLendingEntry(lendingId, deleteUrl, redirectUrl);
+        //    deferred.resolve();
+        //    // assert
+        //    expect($.redirect).toHaveBeenCalledWith(redirectUrl, { redirectUrl });
+        //});
     });
 });
