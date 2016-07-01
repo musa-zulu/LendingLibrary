@@ -8,7 +8,7 @@ namespace LendingLibrary.DB.Repository
 {
     public class PersonRepository : IPersonRepository
     {
-        private ILendingLibraryDbContext _lendingLibraryDbContext;
+        private readonly ILendingLibraryDbContext _lendingLibraryDbContext;
 
         public PersonRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
@@ -16,10 +16,7 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext = lendingLibraryDbContext;
         }
 
-        public List<Person> GetAllPeople()
-        {
-            return _lendingLibraryDbContext.People.ToList();
-        }
+        public List<Person> GetAllPeople() => _lendingLibraryDbContext.People.ToList();       
 
         public void Save(Person person)
         {

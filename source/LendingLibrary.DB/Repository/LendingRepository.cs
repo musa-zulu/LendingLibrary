@@ -8,7 +8,7 @@ namespace LendingLibrary.DB.Repository
 {
     public class LendingRepository : ILendingRepository
     {
-        private ILendingLibraryDbContext _lendingLibraryDbContext;
+        private readonly ILendingLibraryDbContext _lendingLibraryDbContext;
 
         public LendingRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
@@ -16,11 +16,8 @@ namespace LendingLibrary.DB.Repository
             this._lendingLibraryDbContext = lendingLibraryDbContext;
         }
 
-        public List<Lending> GetAll()
-        {
-            return _lendingLibraryDbContext.Lendings.ToList();
-        }
-
+        public List<Lending> GetAll() => _lendingLibraryDbContext.Lendings.ToList();
+        
         public void Save(Lending lending)
         {
             if (lending == null) throw new ArgumentNullException(nameof(lending));

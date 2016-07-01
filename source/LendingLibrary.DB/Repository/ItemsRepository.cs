@@ -8,7 +8,7 @@ namespace LendingLibrary.DB.Repository
 {
     public class ItemsRepository : IItemsRepository
     {
-        private readonly ILendingLibraryDbContext _lendingLibraryDbContext;
+        readonly ILendingLibraryDbContext _lendingLibraryDbContext;
 
         public ItemsRepository(ILendingLibraryDbContext lendingLibraryDbContext)
         {
@@ -16,11 +16,8 @@ namespace LendingLibrary.DB.Repository
             _lendingLibraryDbContext = lendingLibraryDbContext;
         }
 
-        public List<Item> GetAllItems()
-        {
-            return _lendingLibraryDbContext.Items.ToList();
-        }
-
+        public List<Item> GetAllItems() => _lendingLibraryDbContext.Items.ToList();
+        
         public void Save(Item item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
