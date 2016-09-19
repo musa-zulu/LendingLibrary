@@ -10,6 +10,28 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+<!-- Modal -->
+<div id="detailsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Person Details</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <table class="table">
     <tr>
         <th>
@@ -49,6 +71,14 @@
                     <i class="fa fa-pencil" title="Edit" aria-hidden="true"></i>
                     <span class="sr-only">Edit</span>
                 </a> |
+
+                <!-- Trigger the modal with a button -->
+
+                <a class="btn btn-default" data-toggle="modal" data-target="#detailsModal">
+                    <i class="fa fa-archive" title="Details" aria-hidden="true"></i>
+                    <span class="sr-only">Edit</span>
+                </a> |
+
                 <a class="btn btn-danger" onclick="deletePerson('@person.Id')">
                     <i class="fa fa-trash-o" title="Delete" aria-hidden="true"></i>
                     <span class="sr-only">Delete</span>
@@ -58,6 +88,8 @@
     }
 
 </table>
+
+
 
 @section scripts {
     <script>
