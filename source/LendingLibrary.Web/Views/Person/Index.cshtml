@@ -72,13 +72,6 @@
                     <span class="sr-only">Edit</span>
                 </a> |
 
-                <!-- Trigger the modal with a button -->
-
-                <a class="btn btn-default" data-toggle="modal" data-target="#detailsModal">
-                    <i class="fa fa-archive" title="Details" aria-hidden="true"></i>
-                    <span class="sr-only">Edit</span>
-                </a> |
-
                 <a class="btn btn-danger" onclick="deletePerson('@person.Id')">
                     <i class="fa fa-trash-o" title="Delete" aria-hidden="true"></i>
                     <span class="sr-only">Delete</span>
@@ -97,13 +90,14 @@
             var editUrl = '@Url.Action("Edit", "Person")';
             var redirectUrl = '@Url.Action("Edit")';
             LendingLibrary.Web.Person.Edit.editPersonEntry(personId, editUrl, redirectUrl);
+
         }
 
         function deletePerson(personId) {
             var editUrl = '@Url.Action("Delete", "Person")';
-            var redirectUrl = '@Url.Action("Edit")';
+            var redirectUrl = '@Url.Action("Index")';
             LendingLibrary.Web.Person.Delete.deletePerson(personId, editUrl, redirectUrl);
-        }
+        }      
     </script>
 }
 
